@@ -14,7 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -24,11 +23,13 @@ import org.json.JSONObject;
 public class load_saved_data extends HttpServlet {
     
     String month = "", year = "", indicatorid = "", facility = "", district = "";
+    String num,den,allnum,allden,readonly_num,readonly_den;
     
+    String toCallNum,toCallDen;
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        
+        System.out.println("called to run the load indicators script");
         try {
             response.setContentType("text/html;charset=UTF-8");
             
@@ -39,7 +40,8 @@ public class load_saved_data extends HttpServlet {
             year = request.getParameter("year");
             facility = request.getParameter("facil");
             
-            
+            num=den=readonly_num=readonly_den="";
+            allnum=allden=",";
             JSONObject jsonobj = new JSONObject();
            
             
@@ -85,7 +87,7 @@ public class load_saved_data extends HttpServlet {
                     + "<th style=\"background-color: #cccccc;\">Den</th>"
                     + "<th style=\"background-color: #cccccc;\">%</th>"
                     //+ "<th style=\"background-color: #cccccc;\">Target Met?</th></tr>"
-                    + "<tr><th style=\"background-color: #cccccc;\"><p>10.0</p></th><th colspan=\"2\" style=\"background-color: #cccccc;\"><p>Outcomes for birth cohort at 18 months</p></th>"
+                    + "<tr><th style=\"background-color: #cccccc;\"><p>10.0</p></th><th colspan=\"2\" style=\"background-color: #cccccc;\"><p>Outcomes for birth cohort at 18 months </p> </th>"
                     + " <th colspan=\"6\" style=\"background-color: #cccccc;\"><p id=\"mnth\"><p>NB: If a child who was identified positive has additional outcomes, such as tested positive and later died, always classify the child as \"identified positive.\" </p></th></tr>";
             
             
@@ -133,11 +135,39 @@ public class load_saved_data extends HttpServlet {
 
                 //select existing data from the database
                 
-                conn.rs = conn.st.executeQuery("select * from indicators where section ='1'");
+                conn.rs = conn.st.executeQuery("select * from indicators where section ='1' order by indicators.indicator_id");
                 while (conn.rs.next()) {
                     
-                    col++;
+                    num=den=readonly_num=readonly_den=toCallNum=toCallDen="";
+                    if(conn.rs.getString("num")!=null){
+                        num=conn.rs.getString("num");
+                        
+                        if(allnum.contains(","+conn.rs.getString("num")) || allden.contains(","+conn.rs.getString("num"))){
+                        readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
+                        }
+                        else{
+                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allnum+=","+num;
+                    }
                     
+                    if(conn.rs.getString("den")!=null){
+                        den=conn.rs.getString("den");
+                        
+                        if((allnum.contains(","+conn.rs.getString("den")) || allden.contains(","+conn.rs.getString("den")))){
+                          readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
+                        }
+                        else{
+                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allden+=","+den;
+                    }
+                    col = conn.rs.getInt("indicator_id");
+                    
+                    
+                    System.out.println("num:"+allnum+"   den:"+allden);
                     String getdata = "select * from results where facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "' and indicator_id='" + conn.rs.getString("indicator_id") + "'";
 
                     //=========assuming that we only deal with the data that is in the database and not the onne in the administrator 
@@ -147,13 +177,16 @@ public class load_saved_data extends HttpServlet {
                     
                     step2 += "<tr><td><p>" + conn.rs.getString("serial_no") + "</p></td>"
                             + "<td style=\"width:200px;\"><p>" + conn.rs.getString("indicator_name") + "</p><input type=\"hidden\" value=\"" + conn.rs.getString("indicator_id") + "\" name=\"indicid_" + col + "\"></td>"
-                           // + "<td ><input readonly type=\"text\" value=\"" + conn.rs1.getString("target") + "\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\"></td>"
+                            + "<input  type=\"hidden\" readonly type=\"text\" value=\"" + conn.rs1.getString("target") + "\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\">"
                             //+ "<td><p>" + conn.rs.getString("numerator_source") + "</p></td>"
                             //+ "<td><p>" + conn.rs.getString("denominator_source") + "</p></td>"
-                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("numerator") + "\" style=\"width:80%; padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
-                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("denominator") + "\" style=\"width:80%;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
-                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("percentage") + "\" style=\"width:80%;padding:1px;\" readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
-                            //+ "<td><input type=\"text\" value=\"" + conn.rs1.getString("is_target_met") + "\" style=\"width:40px;padding:1px;\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
+                            
+                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("numerator") + "\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_num+" "+toCallNum+" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
+                           
+                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("denominator") + "\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_den+" "+toCallDen+" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
+                            
+                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("percentage") + "\" style=\"padding:1px;background-color:#FFE4C4\"  tabindex='-1' readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
+                            + "<td><input type=\"hidden\" value=\"" + conn.rs1.getString("is_target_met") + "\" style=\"width:40px;padding:1px;background-color:#FFE4C4\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
                             + "</tr>";
                     
                 }
@@ -166,10 +199,37 @@ public class load_saved_data extends HttpServlet {
 
                 //select existing data from the database
                 
-                conn.rs = conn.st.executeQuery("select * from indicators where section ='2'");
+                conn.rs = conn.st.executeQuery("select * from indicators where section ='2' order by indicators.indicator_id");
                 while (conn.rs.next()) {
                     
-                    col++;
+                    col = conn.rs.getInt("indicator_id");
+                    
+                    num=den=readonly_num=readonly_den=toCallNum=toCallDen="";
+                    if(conn.rs.getString("num")!=null){
+                        num=conn.rs.getString("num");
+                        
+                        if(allnum.contains(","+conn.rs.getString("num")) || allden.contains(","+conn.rs.getString("num"))){
+                        readonly_num=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
+                        }
+                        else{
+                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allnum+=","+num;
+                    }
+                    
+                    if(conn.rs.getString("den")!=null){
+                        den=conn.rs.getString("den");
+                        
+                        if((allnum.contains(","+conn.rs.getString("den")) || allden.contains(","+conn.rs.getString("den"))) ){
+                          readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
+                        }
+                        else{
+                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allden+=","+den;
+                    }
                     
                     String getdata = "select * from results where facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "' and indicator_id='" + conn.rs.getString("indicator_id") + "'";
 
@@ -180,13 +240,13 @@ public class load_saved_data extends HttpServlet {
                     
                     step3 += "<tr><td><p>" + conn.rs.getString("serial_no") + "</p></td>"
                             + "<td style=\"width:200px;\"><p>" + conn.rs.getString("indicator_name") + "</p><input type=\"hidden\" value=\"" + conn.rs.getString("indicator_id") + "\" name=\"indicid_" + col + "\"></td>"
-                            //+ "<td ><input readonly type=\"text\" value=\"" + conn.rs1.getString("target") + "\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\"></td>"
+                            + "<input  type=\"hidden\" readonly type=\"text\" value=\"" + conn.rs1.getString("target") + "\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\">"
                  //           + "<td><p>" + conn.rs.getString("numerator_source") + "</p></td>"
                          //   + "<td><p>" + conn.rs.getString("denominator_source") + "</p></td>"
-                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("numerator") + "\" style=\"width:80%; padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
-                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("denominator") + "\" style=\"width:80%;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
-                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("percentage") + "\" style=\"width:80%;padding:1px;\" readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
-                            //+ "<td><input type=\"text\" value=\"" + conn.rs1.getString("is_target_met") + "\" style=\"width:40px;padding:1px;\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
+                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("numerator") + "\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_num+" "+toCallNum+" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
+                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("denominator") + "\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_den+" "+toCallDen+" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
+                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("percentage") + "\" style=\"padding:1px;background-color:#FFE4C4\"  tabindex='-1'  readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
+                            + "<td><input type=\"hidden\" value=\"" + conn.rs1.getString("is_target_met") + "\" style=\"width:40px;padding:1px;background-color:#FFE4C4\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
                             + "</tr>";
                     
                 }
@@ -194,16 +254,42 @@ public class load_saved_data extends HttpServlet {
 
                 //===========step 4
                 
-                
-                col = 14;
 
 
                 //select existing data from the database
                 
-                conn.rs = conn.st.executeQuery("select * from indicators where section ='3'");
+                conn.rs = conn.st.executeQuery("select * from indicators where section ='3' order by indicators.indicator_id");
                 while (conn.rs.next()) {
                     
-                    col++;
+                    col = conn.rs.getInt("indicator_id");
+                    
+                    
+                    num=den=readonly_num=readonly_den=toCallNum=toCallDen="";
+                    if(conn.rs.getString("num")!=null){
+                        num=conn.rs.getString("num");
+                        
+                        if(allnum.contains(","+conn.rs.getString("num")) || allden.contains(","+conn.rs.getString("num"))){
+                        readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
+                        }
+                        else{
+                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allnum+=","+num;
+                    }
+                    
+                    if(conn.rs.getString("den")!=null){
+                        den=conn.rs.getString("den");
+                        
+                        if((allnum.contains(","+conn.rs.getString("den")) || allden.contains(","+conn.rs.getString("den")))){
+                          readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
+                        }
+                        else{
+                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allden+=","+den;
+                    }
                     
                     String getdata = "select * from results where facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "' and indicator_id='" + conn.rs.getString("indicator_id") + "'";
 
@@ -214,13 +300,13 @@ public class load_saved_data extends HttpServlet {
                     
                     step4 += "<tr><td><p>" + conn.rs.getString("serial_no") + "</p></td>"
                             + "<td style=\"width:200px;\"><p>" + conn.rs.getString("indicator_name") + "</p><input type=\"hidden\" value=\"" + conn.rs.getString("indicator_id") + "\" name=\"indicid_" + col + "\"></td>"
-                            //+ "<td ><input readonly type=\"text\" value=\"" + conn.rs1.getString("target") + "\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\"></td>"
+                            + "<input  type=\"hidden\" readonly type=\"text\" value=\"" + conn.rs1.getString("target") + "\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\">"
                            // + "<td><p>" + conn.rs.getString("numerator_source") + "</p></td>"
                             //+ "<td><p>" + conn.rs.getString("denominator_source") + "</p></td>"
-                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("numerator") + "\" style=\"width:80%; padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
-                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("denominator") + "\" style=\"width:80%;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
-                            + "<td><input type=\"text\" tabindex='-1' value=\"" + conn.rs1.getString("percentage") + "\" style=\"width:80%;padding:1px;\" readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
-                            //+ "<td><input type=\"text\" value=\"" + conn.rs1.getString("is_target_met") + "\" style=\"width:40px;padding:1px;\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
+                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("numerator") + "\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_num+" "+toCallNum+" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
+                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("denominator") + "\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_den+" "+toCallDen+" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
+                            + "<td><input type=\"text\" tabindex='-1' value=\"" + conn.rs1.getString("percentage") + "\" style=\"padding:1px;background-color:#FFE4C4\"  tabindex='-1'  readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
+                            + "<td><input type=\"hidden\" value=\"" + conn.rs1.getString("is_target_met") + "\" style=\"width:40px;padding:1px;background-color:#FFE4C4\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
                             + "</tr>";
                     
                 }
@@ -229,16 +315,42 @@ public class load_saved_data extends HttpServlet {
 
                 //==============step 5===============
                 
-                
-                col = 16;
 
 
                 //select existing data from the database
                 
-                conn.rs = conn.st.executeQuery("select * from indicators where section ='4'");
+                conn.rs = conn.st.executeQuery("select * from indicators where section ='4'  order by indicators.indicator_id");
                 while (conn.rs.next()) {
                     
-                    col++;
+                    col = conn.rs.getInt("indicator_id");
+                    
+                    
+                    num=den=readonly_num=readonly_den=toCallNum=toCallDen="";
+                    if(conn.rs.getString("num")!=null){
+                        num=conn.rs.getString("num");
+                        
+                        if(allnum.contains(","+conn.rs.getString("num")) || allden.contains(","+conn.rs.getString("num"))){
+                        readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
+                        }
+                        else{
+                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allnum+=","+num;
+                    }
+                    
+                    if(conn.rs.getString("den")!=null){
+                        den=conn.rs.getString("den");
+                        
+                        if((allnum.contains(","+conn.rs.getString("den")) || allden.contains(","+conn.rs.getString("den")))){
+                          readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
+                        }
+                        else{
+                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allden+=","+den;
+                    }
                     
                     String getdata = "select * from results where facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "' and indicator_id='" + conn.rs.getString("indicator_id") + "'";
 
@@ -249,13 +361,13 @@ public class load_saved_data extends HttpServlet {
                     
                     step5 += "<tr><td><p>" + conn.rs.getString("serial_no") + "</p></td>"
                             + "<td style=\"width:200px;\"><p>" + conn.rs.getString("indicator_name") + "</p><input type=\"hidden\" value=\"" + conn.rs.getString("indicator_id") + "\" name=\"indicid_" + col + "\"></td>"
-                            //+ "<td ><input readonly value=\"" + conn.rs1.getString("target") + "\" type=\"text\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\"></td>"
+                            + "<input  type=\"hidden\" readonly value=\"" + conn.rs1.getString("target") + "\" type=\"text\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\">"
                             //+ "<td><p>" + conn.rs.getString("numerator_source") + "</p></td>"
                             //+ "<td><p>" + conn.rs.getString("denominator_source") + "</p></td>"
-                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("numerator") + "\" style=\"width:80%; padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
-                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("denominator") + "\" style=\"width:80%;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
-                            + "<td><input type=\"text\" tabindex='-1' value=\"" + conn.rs1.getString("percentage") + "\" style=\"width:80%;padding:1px;\" readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
-                            //+ "<td><input type=\"text\" value=\"" + conn.rs1.getString("is_target_met") + "\" style=\"width:40px;padding:1px;\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
+                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("numerator") + "\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_num+" "+toCallNum+" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
+                            + "<td><input type=\"text\" value=\"" + conn.rs1.getString("denominator") + "\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_den+" "+toCallDen+" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
+                            + "<td><input type=\"text\" tabindex='-1' value=\"" + conn.rs1.getString("percentage") + "\" style=\"padding:1px;background-color:#FFE4C4\"  tabindex='-1'  readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
+                            + "<td><input type=\"hidden\" value=\"" + conn.rs1.getString("is_target_met") + "\" style=\"width:40px;padding:1px;background-color:#FFE4C4\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
                             + "</tr>";
                     
                 }
@@ -272,26 +384,54 @@ public class load_saved_data extends HttpServlet {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   NEW DATA  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
             
             else {
-
+                System.out.println("Running the else statement here");
                 //===============================this is  step 2========================
                 int col = 0;
                 
-                conn.rs = conn.st.executeQuery("select * from indicators join target on indicators.indicator_id=target.indicator_id where section ='1'");
+                conn.rs = conn.st.executeQuery("select * from indicators join target on indicators.indicator_id=target.indicator_id where section ='1' order by indicators.indicator_id");
                 while (conn.rs.next()) {
                     
-                    col++;
+                    col = conn.rs.getInt("indicator_id");
                     
                     
+                    num=den=readonly_num=readonly_den=toCallNum=toCallDen="";
+                    if(conn.rs.getString("num")!=null){
+                        num=conn.rs.getString("num");
+                        
+                        if(allnum.contains(","+conn.rs.getString("num")) || allden.contains(","+conn.rs.getString("num"))){
+                        readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
+                        }
+                        else{
+                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allnum+=","+num;
+                    }
+                    
+                    if(conn.rs.getString("den")!=null){
+                        den=conn.rs.getString("den");
+                        
+                        if((allnum.contains(","+conn.rs.getString("den")) || allden.contains(","+conn.rs.getString("den")))){
+                          readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
+                        }
+                        else{
+                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allden+=","+den;
+                    }
+                    
+                    System.out.println("allnum : "+allnum+" allden : "+allden);
                     
                     step2 += "<tr><td><p>" + conn.rs.getString("serial_no") + "</p></td>"
                             + "<td style=\"width:200px;\"><p>" + conn.rs.getString("indicator_name") + "</p><input type=\"hidden\" value=\"" + conn.rs.getString("indicators.indicator_id") + "\" name=\"indicid_" + col + "\"></td>"
-                            //+ "<td ><input value=\""+conn.rs.getString("target_value") +"\" readonly type=\"text\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\"></td>"
+                            + "<input type=\"hidden\" value=\""+conn.rs.getString("target_value") +"\" readonly type=\"text\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\">"
                             //+ "<td><p>" + conn.rs.getString("numerator_source") + "</p></td>"
                             //+ "<td><p>" + conn.rs.getString("denominator_source") + "</p></td>"
-                            + "<td><input type=\"text\"  style=\"width:80%; padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
-                            + "<td><input type=\"text\"  style=\"width:80%;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
-                            + "<td><input type=\"text\" tabindex='-1'  style=\"width:80%;padding:1px;\" readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
-                            //+ "<td><input type=\"text\"  style=\"width:40px;padding:1px;\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
+                            + "<td><input type=\"text\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" name=\"num_" + col + "\"  "+toCallNum+" "+readonly_num+" id=\"num_" + col + "\"></td>"
+                            + "<td><input type=\"text\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" name=\"den_" + col + "\" "+toCallDen+" "+readonly_den+" id=\"den_" + col + "\"></td>"
+                            + "<td><input type=\"text\" tabindex='-1'  style=\"padding:1px;background-color:#FFE4C4\"  tabindex='-1'  readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
+                            + "<td><input type=\"hidden\" tabindex='-1' style=\"width:40px;padding:1px;background-color:#FFE4C4\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
                             + "</tr>";
                     
                 }
@@ -300,24 +440,48 @@ public class load_saved_data extends HttpServlet {
                 
                 
                 
-                col = 9;
-                
-                     conn.rs = conn.st.executeQuery("select * from indicators join target on indicators.indicator_id=target.indicator_id where section ='2'");
+                     conn.rs = conn.st.executeQuery("select * from indicators join target on indicators.indicator_id=target.indicator_id where section ='2' order by indicators.indicator_id");
                 while (conn.rs.next()) {
                     
-                    col++;
+                   col = conn.rs.getInt("indicator_id");
                     
                     
+                    num=den=readonly_num=readonly_den=toCallNum=toCallDen="";
+                    if(conn.rs.getString("num")!=null){
+                        num=conn.rs.getString("num");
+                        
+                        if(allnum.contains(","+conn.rs.getString("num")) || allden.contains(","+conn.rs.getString("num"))){
+                        readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
+                        }
+                        else{
+                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allnum+=","+num;
+                    }
+                    
+                    if(conn.rs.getString("den")!=null){
+                        den=conn.rs.getString("den");
+                        
+                        if((allnum.contains(","+conn.rs.getString("den")) || allden.contains(","+conn.rs.getString("den")))){
+                          readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
+                        }
+                        else{
+                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allden+=","+den;
+                    }
                     
                     step3 += "<tr><td><p>" + conn.rs.getString("serial_no") + "</p></td>"
                             + "<td style=\"width:200px;\"><p>" + conn.rs.getString("indicator_name") + "</p><input type=\"hidden\" value=\"" + conn.rs.getString("indicators.indicator_id") + "\" name=\"indicid_" + col + "\"></td>"
-                            //+ "<td ><input value=\""+conn.rs.getString("target_value") +"\" readonly type=\"text\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\"></td>"
+                            + "<input  type=\"hidden\" value=\""+conn.rs.getString("target_value") +"\" readonly type=\"text\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\">"
                             //+ "<td><p>" + conn.rs.getString("numerator_source") + "</p></td>"
                             //+ "<td><p>" + conn.rs.getString("denominator_source") + "</p></td>"
-                            + "<td><input type=\"text\"  style=\"width:80%; padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
-                            + "<td><input type=\"text\"  style=\"width:80%;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
-                            + "<td><input type=\"text\" tabindex='-1'  style=\"width:80%;padding:1px;\" readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
-                            //+ "<td><input type=\"text\"  style=\"width:40px;padding:1px;\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
+                            + "<td><input type=\"text\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_num+" "+toCallNum+" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
+                            + "<td><input type=\"text\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_den+" "+toCallDen+" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
+                            + "<td><input type=\"text\" tabindex='-1'  style=\"padding:1px;background-color:#FFE4C4\"  tabindex='-1'  readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
+                            + "<td><input type=\"hidden\"  style=\"width:40px;padding:1px;background-color:#FFE4C4\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
                             + "</tr>";
                     
                 }
@@ -326,53 +490,98 @@ public class load_saved_data extends HttpServlet {
 
                 //==============This is step 4========================
                 
-                col = 14;
-                   conn.rs = conn.st.executeQuery("select * from indicators join target on indicators.indicator_id=target.indicator_id where section ='3'");
+                   conn.rs = conn.st.executeQuery("select * from indicators join target on indicators.indicator_id=target.indicator_id where section ='3' order by indicators.indicator_id");
                 while (conn.rs.next()) {
+                    col = conn.rs.getInt("indicator_id");
                     
-                    col++;
                     
+                    num=den=readonly_num=readonly_den=toCallNum=toCallDen="";
+                    if(conn.rs.getString("num")!=null){
+                        num=conn.rs.getString("num");
+                        
+                        if(allnum.contains(","+conn.rs.getString("num")) || allden.contains(","+conn.rs.getString("num"))){
+                        readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
+                        }
+                        else{
+                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allnum+=","+num;
+                    }
                     
+                    if(conn.rs.getString("den")!=null){
+                        den=conn.rs.getString("den");
+                        
+                        if((allnum.contains(","+conn.rs.getString("den")) || allden.contains(","+conn.rs.getString("den")))){
+                          readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
+                        }
+                        else{
+                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allden+=","+den;
+                    }
                     
                     step4 += "<tr><td><p>" + conn.rs.getString("serial_no") + "</p></td>"
                             + "<td style=\"width:200px;\"><p>" + conn.rs.getString("indicator_name") + "</p><input type=\"hidden\" value=\"" + conn.rs.getString("indicators.indicator_id") + "\" name=\"indicid_" + col + "\"></td>"
-                            //+ "<td ><input value=\""+conn.rs.getString("target_value") +"\" readonly type=\"text\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\"></td>"
+                            + "<input  type=\"hidden\" value=\""+conn.rs.getString("target_value") +"\" readonly type=\"text\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\">"
                             //+ "<td><p>" + conn.rs.getString("numerator_source") + "</p></td>"
                             //+ "<td><p>" + conn.rs.getString("denominator_source") + "</p></td>"
-                            + "<td><input type=\"text\"  style=\"width:80%; padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
-                            + "<td><input type=\"text\"  style=\"width:80%;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
-                            + "<td><input type=\"text\" tabindex='-1'  style=\"width:80%;padding:1px;\" readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
-                            //+ "<td><input type=\"text\"  style=\"width:40px;padding:1px;\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
+                            + "<td><input type=\"text\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_num+" "+toCallNum+" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
+                            + "<td><input type=\"text\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_den+" "+toCallDen+" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
+                            + "<td><input type=\"text\" tabindex='-1'  style=\"padding:1px;background-color:#FFE4C4\"  tabindex='-1'  readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
+                            + "<td><input type=\"hidden\"  style=\"width:40px;padding:1px;background-color:#FFE4C4\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
                             + "</tr>";
                     
                 }
-
                 
-                
-                col = 16;
-                
-                    conn.rs = conn.st.executeQuery("select * from indicators join target on indicators.indicator_id=target.indicator_id where section ='4'");
+                    conn.rs = conn.st.executeQuery("select * from indicators join target on indicators.indicator_id=target.indicator_id where section ='4' order by indicators.indicator_id");
                 while (conn.rs.next()) {
+                    col = conn.rs.getInt("indicator_id");
                     
-                    col++;
+                    num=den=readonly_num=readonly_den=toCallNum=toCallDen="";
+                    if(conn.rs.getString("num")!=null){
+                        num=conn.rs.getString("num");
+                        
+                        if(allnum.contains(","+conn.rs.getString("num")) || allden.contains(","+conn.rs.getString("num"))){
+                        readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
+                        }
+                        else{
+                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allnum+=","+num;
+                    }
                     
-                    
-                    
+                    if(conn.rs.getString("den")!=null){
+                        den=conn.rs.getString("den");
+                        
+                        if((allnum.contains(","+conn.rs.getString("den")) || allden.contains(","+conn.rs.getString("den")))){
+                          readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
+                        }
+                        else{
+                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                        }
+                        
+                        allden+=","+den;
+                    }
+                   
+                    System.out.println("last step is here ");
                     step5 += "<tr><td><p>" + conn.rs.getString("serial_no") + "</p></td>"
                             + "<td style=\"width:200px;\"><p>" + conn.rs.getString("indicator_name") + "</p><input type=\"hidden\" value=\"" + conn.rs.getString("indicators.indicator_id") + "\" name=\"indicid_" + col + "\"></td>"
-                            //+ "<td ><input value=\""+conn.rs.getString("target_value") +"\" readonly type=\"text\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\"></td>"
+                            + "<input  type=\"hidden\" value=\""+conn.rs.getString("target_value") +"\" readonly type=\"text\" style=\"width:40px;padding:1px;\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" class=\"shortinput\" name=\"target_" + col + "\" id=\"target_" + col + "\">"
                             //+ "<td><p>" + conn.rs.getString("numerator_source") + "</p></td>"
                             //+ "<td><p>" + conn.rs.getString("denominator_source") + "</p></td>"
-                            + "<td><input type=\"text\"  style=\"width:80%; padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
-                            + "<td><input type=\"text\"  style=\"width:80%;padding:1px;\" onkeypress=\"return numbers(event);\" onkeyup=\"calculatepercent(" + col + ");\" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
-                            + "<td><input type=\"text\" tabindex='-1'  style=\"width:80%;padding:1px;\" readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
-                            //+ "<td><input type=\"text\"  style=\"width:40px;padding:1px;\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
+                            + "<td><input type=\"text\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_num+" "+toCallNum+" name=\"num_" + col + "\" id=\"num_" + col + "\"></td>"
+                            + "<td><input type=\"text\" onkeypress=\"return numbers(event);\" onfocusout=\"calculatepercent(" + col + ");\" "+readonly_den+" "+toCallDen+" name=\"den_" + col + "\" id=\"den_" + col + "\"></td>"
+                            + "<td><input type=\"text\" tabindex='-1'  style=\"padding:1px;background-color:#FFE4C4\"  tabindex='-1'  readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
+                            + "<td><input type=\"hidden\"  style=\"width:40px;padding:1px;background-color:#FFE4C4\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
                             + "</tr>";
                     
                 }
 
                 
-                
+                System.out.println("entered else");   
             }//end of else  
             
             
@@ -434,4 +643,12 @@ public class load_saved_data extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+public String calledMethodNum(String num){
+    return "onblur='fill"+num+"();'";
+}
+public String calledMethodDen(String den){
+    return "onblur='fill"+den+"();'";
+}
+
 }

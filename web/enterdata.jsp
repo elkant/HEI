@@ -182,6 +182,8 @@
         
         <!--===========================GET VALIDATOR==========================--->
         <script type="text/javascript" src="js/validateVerticalSteps.js"></script>
+        <!--calculate totals-->
+        <script type="text/javascript" src="js/AutoFill.js"></script>
 
 
 
@@ -252,10 +254,6 @@
                 xmlhttp.open("POST","getcounty",true);
                 xmlhttp.send();
             }
-
-
-
-
 
 
             function filter_districts(district){
@@ -401,13 +399,103 @@
             //=============================================CALCULATE PERCENTAGES==================================
 
             function calculatepercent(suffix){
+                if(document.getElementById("num_"+suffix).value!="" && document.getElementById("den_"+suffix).value!=""){ 
+                    var num=parseInt(document.getElementById("num_"+suffix).value);
+ 
+                    var den=parseInt(document.getElementById("den_"+suffix).value);
+                    var perc=0;
+                     if(den>0 && num>0){
+                        var perc=((num/den)*100);
+                    }
+ 
+                    //perc=Math.p
+ 
+                    document.getElementById("percent_"+suffix).value=Math.round(parseInt(perc));   
+                    //compare entry and target
+ 
+                    var target=document.getElementById("target_"+suffix).value;
+ 
+ 
+                    if(parseInt(perc)>=parseInt(target)&&target!=""){
+     
+                        document.getElementById("targetmet_"+suffix).value="Y"; 
+     
+                    }
+                    else if(parseInt(perc)<parseInt(target)&&target!=""){
+     
+                        document.getElementById("targetmet_"+suffix).value="N";
+     
+                    }
+                        
+                    if((suffix>=11 && suffix<=15) || suffix==1){
+                        if(suffix==1){
+                             fillA();
+                        }
+                        var d_11=0,d_12=0,d_13=0,d_14=0,d_15=0;
+                        var A=parseInt(document.getElementById("den_1").value);
+                        if(document.getElementById("num_11").value!=""){d_11=document.getElementById("num_11").value; }   
+                        if(document.getElementById("num_12").value!=""){d_12=document.getElementById("num_12").value; }   
+                        if(document.getElementById("num_13").value!=""){d_13=document.getElementById("num_13").value; }   
+                        if(document.getElementById("num_14").value!=""){d_14=document.getElementById("num_14").value;}    
+                        if(document.getElementById("num_15").value!=""){d_15=document.getElementById("num_15").value;}    
+
+                        var sum=parseInt(d_11)+parseInt(d_12)+parseInt(d_13)+parseInt(d_14)+parseInt(d_15);
+                        var message="";
+                        if(sum!=A){
+                         message="0" ;  
+                        }
+                        else{
+                          message="1" ;     
+                        }
+                        document.getElementById("qc1").value=message;
+                    }
+                    
+                    if(suffix==1 || suffix==20 || (suffix>=21 && suffix<=26)){
+                        if(suffix==1){
+                             fillA();
+                        }
+                        if(suffix==20){
+                             fillE();
+                        }
+                        var d_21=0,d_22=0,d_23=0,d_24=0,d_25=0,d_26=0;
+                        var F=parseInt(document.getElementById("den_21").value);
+                    if(document.getElementById("num_21").value!=""){d_21=document.getElementById("num_21").value; }   
+                    if(document.getElementById("num_22").value!=""){d_22=document.getElementById("num_22").value; }   
+                    if(document.getElementById("num_23").value!=""){d_23=document.getElementById("num_23").value; }   
+                    if(document.getElementById("num_24").value!=""){d_24=document.getElementById("num_24").value;}    
+                    if(document.getElementById("num_25").value!=""){d_25=document.getElementById("num_25").value;}    
+                    if(document.getElementById("num_26").value!=""){d_26=document.getElementById("num_26").value;}    
+                    
+                    var sum=parseInt(d_21)+parseInt(d_22)+parseInt(d_23)+parseInt(d_24)+parseInt(d_25)+parseInt(d_26);
+                    var message="";
+                    
+                    if(sum!=F){
+                     message="0" ;  
+                    }
+                    else{
+                      message="1" ;     
+                    }
+                    document.getElementById("qc2").value=message;
+                    }
+                    
+                    if(suffix==21 || suffix==20){
+                    autost(23);
+                }
+                }
     
+    
+            }
+
+
+            function autost(suffix){
                 if(document.getElementById("num_"+suffix).value!=""&&document.getElementById("den_"+suffix).value!=""){ 
                     var num=parseInt(document.getElementById("num_"+suffix).value);
  
                     var den=parseInt(document.getElementById("den_"+suffix).value);
- 
-                    var perc=((num/den)*100);
+                    var perc=0;
+                    if(den>0 && num>0){
+                        var perc=((num/den)*100);
+                    }
  
  
                     //perc=Math.p
@@ -436,8 +524,6 @@
     
     
             }
-
-
 
 
             function numbers(evt){
@@ -500,21 +586,29 @@
 
         <!-----------------------JNOTY MESSAGE---------------------------->    
         <%
-            //  if (session.getAttribute("message")!= null)  { %>
+              if (session.getAttribute("saved_data")!= null)  { %>
         <script type="text/javascript"> 
                     
-            //                    var n = noty({text:'saved',
-            //                        layout: 'center',
-            //                        type: 'Success',
-            //                        timeout: 1800});
+                                var n = noty({text:session.getAttribute("saved_data").toString(),
+                                    layout: 'center',
+                                    type: 'Success',
+                                    timeout: 1800});
                     
         </script> <%
 
-//session.removeAttribute("message");
-// }
+session.removeAttribute("saved_data");
+ }
 
         %>  
 
+        <script type="text/javascript"> 
+                    
+                                var n = noty({text:'saved data successfully.',
+                                    layout: 'center',
+                                    type: 'Success',
+                                    timeout: 1800});
+                    
+        </script>
     </head>    
 
 
@@ -752,19 +846,11 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
 
                                     <div id="step-2" style="width:99%;">
-                                        <h2 class="StepTitle"><p>1st Review Cohort birth month + 12 Months  <img src="images/blguide.png" id="page2" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "></p> </h2>
+                                        <h2 class="StepTitle"><p>1st Review : Cohort birth month + 12 Months  <img src="images/blguide.png" id="page2" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> <b style="margin-left:50px; font-size: 20px;" id="cohort_12"></b> </p> </h2>
                                    <div id="dialog2" title="Form wizard Help." style=" font-size: 17px;">  
                                        In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  
                                        
                                           </div>
-
-
-
-
-
-
-
-
 
 
                                         <table  border="1" cellpadding="1px" style="width: 99%;"  id="step2">
@@ -779,7 +865,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
 
                                     <div id="step-3" style="width:99%;">
-                                        <h2 class="StepTitle"><p>Outcomes for Birth Cohort at 9 Months   <img src="images/blguide.png" id="page3" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "></p> </h2>
+                                        <h2 class="StepTitle"><p>Outcomes for Birth Cohort at 9 Months   <img src="images/blguide.png" id="page3" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> </p> </h2>
   <div id="dialog3" title="Form wizard Help." style=" font-size: 17px;">  
                                        In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  
                                        
@@ -789,6 +875,9 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                                         <table  border="1" style="width: 99%;" id="step3">
 
                                         </table>
+                                        <div>
+                                            <b style="">  <input type="hidden" id="qc1" value="1"/> </b>
+                                        </div>
                                     </div>
 
 
@@ -798,7 +887,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
                                     <!--+++++++++++++++++++++++++++++++++++++++PREVENT  SERVICES--------------------------------------------------->       
                                     <div id="step-4" style="width:99%;">
-                                        <h2 class="StepTitle"><p>2nd Review :Cohort Birth Month + 24 Months   <img src="images/blguide.png" id="page4" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "></p> </h2>	
+                                        <h2 class="StepTitle"><p>2nd Review :Cohort Birth Month + 24 Months   <img src="images/blguide.png" id="page4" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> <b style="margin-left:50px; font-size: 20px;" id="cohort_24"></b></p>  </h2>	
                                         <!-- ui-dialog -->
                          
                                           <div id="dialog4" title="Form wizard Help." style=" font-size: 17px;">  
@@ -816,7 +905,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                                     <!-----------------------------------------end of prevent services------------------->
 
                                     <div id="step-5" style="width:99%;">
-                                        <h2 class="StepTitle"><p>Outcomes for birth Cohort at 18 Months   <img src="images/blguide.png" id="page5" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "></p> </h2>
+                                        <h2 class="StepTitle"><p>Outcomes for birth Cohort at 18 Months   <img src="images/blguide.png" id="page5" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; ">  </p> </h2>
 
   <div id="dialog5" title="Form wizard Help." style=" font-size: 17px;">  
                                        In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  
@@ -827,9 +916,9 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
                                         </table> 
 
-
-
-
+                                        <div>
+                                            <b style=""><input type="hidden" id="qc2" value="1" ></b> </b>
+                                        </div>
 
 
                                     </div>
@@ -852,7 +941,25 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
             <div id="footer">
 
             </div>
+                                                        
+         
         </div>
+        <script>
+        $(document).ready(function(){
+        $("#year").change(function(){
+            var year= $("#year").val();
+            
+        }) ; 
+        $("#month").change(function(){
+            var month = $("#month").val();
+            var year = $("#year").val();
+            if(year!="" && month!=""){
+                $("#cohort_12").html(month+", "+(parseInt(year)+1));
+                $("#cohort_24").html(month+", "+(parseInt(year)+2));
+            }
+        }) ; 
+        });  
+        </script>
     </body>
 
 

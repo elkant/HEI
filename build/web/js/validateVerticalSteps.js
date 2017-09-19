@@ -109,7 +109,7 @@ function validateAllSteps(){
       
      
     if(!isStepValid){
-        $('#wizard').smartWizard('showMessage','Please correct the errors in the steps and continue');
+        $('#wizard').smartWizard('showMessage','<font color="red">Quality Checks 2nd Review : Please ensure the sum of numerators of <br> 16.1 to 16,6 is equal to denominator of 16.1</font>');
     }
               
     return isStepValid;
@@ -159,7 +159,7 @@ function validateSteps(step){
     if(step == 3){
         if(validateStep3() == false ){
             isStepValid = false; 
-            $('#wizard').smartWizard('showMessage','Please correct the errors in step'+step+ ' and click next.');
+            $('#wizard').smartWizard('showMessage','<font color="red">Quality Checks 1st Review : Ensure the sum of numerators of <br> 11.1 to 11.5 is equal to the value of denominator of 11.1</font>');
             $('#wizard').smartWizard('setError',{
                 stepnum:step,
                 iserror:true
@@ -198,7 +198,7 @@ function validateSteps(step){
     if(step == 5){
         if(validateStep5() == false ){
             isStepValid = false; 
-            $('#wizard').smartWizard('showMessage','Please correct the errors in step'+step+ ' and click next.');
+            $('#wizard').smartWizard('showMessage','<font color="red">Quality Checks 2nd Review : Please ensure the sum of numerators of <br> 16.1 to 16,6 is equal to denominator of 16.1</font>');
             $('#wizard').smartWizard('setError',{
                 stepnum:step,
                 iserror:true
@@ -329,20 +329,11 @@ else if(facil==""){
         
       var isValid = true; 
     // Validate Username
-    
-   
-     
-   
-    
- if(1==1){
-       
-       
+    var value = document.getElementById("qc1").value.trim();
+    if(value!="1"){
+     isValid = false;   
     }
-
-    
-    else{
-       
-    }
+   
     return isValid;
     }
 
@@ -352,14 +343,6 @@ else if(facil==""){
 function validateStep4(){
         
   
-   
-    
-    
-    
- 
-
-
-
  if(1==1){
         
        
@@ -375,19 +358,15 @@ function validateStep4(){
 
 //===================validate step 5    
     function validateStep5(){
-       
+             
+      var isValid = true; 
+    // Validate Username
+    var value = document.getElementById("qc2").value.trim();
+    if(value!="1"){
+     isValid = false;   
+    }
    
-
- if(1==1){
-      
-       
-    }
-
-    
-    else{
-       
-    }
-    return true;
+    return isValid;
     }
 //================validate step 7=========================================================================
     

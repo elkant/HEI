@@ -253,7 +253,7 @@ else{ %>
 
                                                      <%=session.getAttribute("createdfaciltable")%>
                                                      
-                                                     <tr><td></td><td><input type="submit" onmouseover="" style="width:120px;height:35px;background-color:;" value="submit"  /></td></tr>        
+                                                     <tr><td></td><td><input type="submit" onmouseover="" style="width:120px;height:35px;" value="submit"  /></td></tr>        
                    
                </table></form>
                

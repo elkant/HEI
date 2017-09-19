@@ -77,9 +77,10 @@ public class savedata extends HttpServlet {
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%VARIABLES RECEIVED IN A LOOP%%%%%%%%%%%%%%%%%%%%%%%%%
         dbConn conn = new dbConn();
 
-
-        for (int a = 1; a <= 22; a++) {
-
+        System.out.println("called to save data");
+        
+        for (int a = 1; a <= 26; a++) {
+            System.out.println("looping through : "+a);
             //=====target========    
             if (request.getParameter("target_" + a) != null) {
                 target = request.getParameter("target_" + a);
@@ -103,7 +104,8 @@ public class savedata extends HttpServlet {
 
             }
 
-            //===target met======== 
+            //===target met========
+            System.out.println("output: target met"+request.getParameter("targetmet_" + a));
             if (request.getParameter("targetmet_" + a) != null) {
                 try {
                     targetmet = request.getParameter("targetmet_" + a);
@@ -124,7 +126,7 @@ public class savedata extends HttpServlet {
                         //=============continue from here tommorow===============
                         String update = "update results set  target='" + target + "' , numerator='" + num + "', denominator='" + den + "' ,percentage='" + perc + "', is_target_met='" + targetmet + "' where indicator_id='" + indicatorid + "' and  facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "' ";
 
-                        System.out.println(update);
+                        System.out.println("update:"+update);
 
                         conn.st1.executeUpdate(update);
 
@@ -139,7 +141,7 @@ public class savedata extends HttpServlet {
 
                         String insert = "insert into results (result_id,birth_year,facility_id,indicator_id,numerator,denominator,percentage,is_target_met,district_id,month,target)"
                                 + "                  values('"+uniqueid().trim()+"','" + year + "','" + facility + "','" + indicatorid + "','" + num + "','" + den + "','" + perc + "','" + targetmet + "','" + district + "','" + month + "','" + target + "')";
-                        System.out.println(insert);
+                        System.out.println("insert"+insert);
 
                         conn.st1.executeUpdate(insert);
 
@@ -160,6 +162,9 @@ public class savedata extends HttpServlet {
             }
 
         }//end of forloop
+        
+        
+        System.out.println("message is:"+msg);
       //======set session response=====    
                     //session.setAttribute("msg", msg);
           response.sendRedirect("enterdata.jsp");

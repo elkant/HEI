@@ -185,7 +185,7 @@ else{ %>
 
 <tr><td>Number of facilities:</td><td><input type="text" required name="number" onkeypress="return numbers(event);" id="number" /></td></tr>    
 
-           <tr><td></td><td><input type="submit" style="width:120px;height:35px;background-color:;" value="Next"  /></td></tr>        
+           <tr><td></td><td><input type="submit" style="width:120px;height:35px;" value="Next"  /></td></tr>        
                    
                </table></form>
                

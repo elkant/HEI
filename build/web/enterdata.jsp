@@ -876,7 +876,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
                                         </table>
                                         <div>
-                                            <b style="">  <input type="hidden" id="qc1" value="1"/> </b>
+                                            <b style="">  <input type="hidden" id="qc1" value="0"/> </b>
                                         </div>
                                     </div>
 
@@ -899,15 +899,12 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
                                         </table>
                                     </div>
-
-
-
                                     <!-----------------------------------------end of prevent services------------------->
 
                                     <div id="step-5" style="width:99%;">
                                         <h2 class="StepTitle"><p>Outcomes for birth Cohort at 18 Months   <img src="images/blguide.png" id="page5" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; ">  </p> </h2>
 
-  <div id="dialog5" title="Form wizard Help." style=" font-size: 17px;">  
+                                <div id="dialog5" title="Form wizard Help." style=" font-size: 17px;">  
                                        In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  
                                        
                                           </div>
@@ -917,14 +914,10 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                                         </table> 
 
                                         <div>
-                                            <b style=""><input type="hidden" id="qc2" value="1" ></b> </b>
+                                            <b style=""><input type="hidden" id="qc2" value="0" ></b> </b>
                                         </div>
-
-
                                     </div>
                                 </div>
-
-
 
                                 <!-- End SmartWizard Content -->  		
 
@@ -958,7 +951,25 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                 $("#cohort_24").html(month+", "+(parseInt(year)+2));
             }
         }) ; 
-        });  
+        }); 
+        
+$('body').on('keydown', 'input, select, textarea', function(e) {
+    var self = $(this)
+      , form = self.parents('form:eq(0)')
+      , focusable
+      , next
+      ;
+    if (e.keyCode == 13) {
+        focusable = form.find('input').filter(':visible:not([readonly]):enabled');
+        next = focusable.eq(focusable.index(this)+1);
+        if (next.length) {
+            next.focus();
+        } else {
+            form.submit();
+        }
+        return false;
+    }
+});
         </script>
     </body>
 

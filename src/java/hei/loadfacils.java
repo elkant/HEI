@@ -59,8 +59,8 @@ public class loadfacils extends HttpServlet {
            
            //add all the districts to the 
           
-//           current_facils="<option value=\"\">Choose facilty</option>";
-           current_facils="";
+           current_facils="<option value=\"\">Choose facilty</option>";
+//           current_facils="";
            
            while(conn.rs.next()){
 

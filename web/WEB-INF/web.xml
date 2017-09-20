@@ -78,6 +78,10 @@
         <servlet-name>editemail</servlet-name>
         <servlet-class>hei.editemail</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>load_dist_county</servlet-name>
+        <servlet-class>hei.load_dist_county</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>updatedbpword</servlet-name>
         <url-pattern>/updatedbpword</url-pattern>
@@ -153,6 +157,10 @@
     <servlet-mapping>
         <servlet-name>editemail</servlet-name>
         <url-pattern>/editemail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>load_dist_county</servlet-name>
+        <url-pattern>/load_dist_county</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>900000</session-timeout>

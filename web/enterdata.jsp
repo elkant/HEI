@@ -754,7 +754,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                                             <tr>
                                                 <td class="align_button_right">County<font color="red">*</font></td>
                                                 <td>
-                                                    <Select id="county" class="textbox6" style="width:250px;" onchange="filter_districts(this);"   name="county" >
+                                                    <Select id="county" class="textbox6" style="min-width: 400px; width:100%" onchange="filter_districts(this);"   name="county" >
 
                                                         <option value="">Choose County</option>  
                                                         <option value="4">Baringo</option>
@@ -770,7 +770,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
                                             <tr>  
                                                 <td class="align_button_right">District<font color="red">*</font></td>
-                                                <td><Select id="district" class="textbox6" style="width:250px;"  onchange="filter_facil(this);" name="district" >
+                                                <td><Select id="district" class="textbox6" style="min-width: 400px; width:100%"  onchange="filter_facil(this);" name="district" >
 
                                                         <option value="">Choose District</option>  
                                                     </select></td>
@@ -778,7 +778,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
                                             <tr>  
                                                 <td class="align_button_right">Facility Name<font color="red">*</font></td>
-                                                <td><Select id="facility" class="textbox6" style="width:250px;"   onchange="facilitymilf(this);load_saved_data();" name="facility" >
+                                                <td><Select id="facility" class="textbox6" style="min-width: 400px; width:100%"   onchange="facilitymilf(this);load_saved_data();" name="facility" >
 
                                                         <option value="">Choose Facility</option>  
                                                     </select></td>
@@ -807,7 +807,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                                                 %>
 
                                                 <td class="align_button_right">Cohort Birth Year<font color="red">*</font></td>
-                                                <td><Select id="year" class="textbox6" style="width:250px;" onchange="getmonths(this);load_saved_data();"   name="year" >
+                                                <td><Select id="year" class="textbox6" style="min-width: 400px; width:100%" onchange="getmonths(this);load_saved_data();"   name="year" >
 
                                                         <option value="">Choose  Year</option>  
 
@@ -820,7 +820,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                                             <tr>  
                                                 <td class="align_button_right">Birth Month<font color="red">*</font></td>
                                                 <td>
-                                                    <Select id="month" style="width:250px;" class="textbox6"   onchange="load_saved_data();" name="month" >
+                                                    <Select id="month" style="min-width: 400px; width:100%" class="textbox6"   onchange="load_saved_data();" name="month" >
 
                                                         <option value="">Choose  Month</option>  
                                                     </select></td></tr>
@@ -939,6 +939,18 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
         </div>
         <script>
         $(document).ready(function(){
+            //load all facilities
+            $.ajax({
+        url:'loadfacils',
+        type:"post",
+        dataType:"html",
+        success:function(data){
+         $("#facility").html(data);
+         $("#facility").select2();
+         }
+    });
+            
+            
         $("#year").change(function(){
             var year= $("#year").val();
             
@@ -950,7 +962,26 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                 $("#cohort_12").html(month+", "+(parseInt(year)+1));
                 $("#cohort_24").html(month+", "+(parseInt(year)+2));
             }
-        }) ; 
+        }) ;
+       //capture facility change 
+        $("#facility").change(function(){
+         //pass facility id
+        var facility_id = $("#facility").val();
+        $.ajax({
+        url:'load_dist_county?hf_id='+facility_id,
+        type:"post",
+        dataType:"json",
+        success:function(data){
+         var district = data.district;
+         var county = data.county;
+         $("#district").html(district);
+         $("#county").html(county);
+         }
+    });
+        
+        });
+        
+        
         }); 
         
 $('body').on('keydown', 'input, select, textarea', function(e) {

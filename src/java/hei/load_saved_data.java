@@ -146,7 +146,7 @@ public class load_saved_data extends HttpServlet {
                         readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
                         }
                         else{
-                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        toCallNum =  calledMethodNum(num)+" required style=\"padding:1px;\"";    
                         }
                         
                         allnum+=","+num;
@@ -159,11 +159,12 @@ public class load_saved_data extends HttpServlet {
                           readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
                         }
                         else{
-                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                            toCallDen =  calledMethodDen(den)+" required style=\"padding:1px;\"";    
                         }
                         
                         allden+=","+den;
                     }
+                    
                     col = conn.rs.getInt("indicator_id");
                     
                     
@@ -209,10 +210,10 @@ public class load_saved_data extends HttpServlet {
                         num=conn.rs.getString("num");
                         
                         if(allnum.contains(","+conn.rs.getString("num")) || allden.contains(","+conn.rs.getString("num"))){
-                        readonly_num=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
+                        readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
                         }
                         else{
-                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        toCallNum =  calledMethodNum(num)+" required style=\"padding:1px;\"";    
                         }
                         
                         allnum+=","+num;
@@ -221,11 +222,11 @@ public class load_saved_data extends HttpServlet {
                     if(conn.rs.getString("den")!=null){
                         den=conn.rs.getString("den");
                         
-                        if((allnum.contains(","+conn.rs.getString("den")) || allden.contains(","+conn.rs.getString("den"))) ){
+                        if((allnum.contains(","+conn.rs.getString("den")) || allden.contains(","+conn.rs.getString("den")))){
                           readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
                         }
                         else{
-                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                            toCallDen =  calledMethodDen(den)+" required style=\"padding:1px;\"";    
                         }
                         
                         allden+=","+den;
@@ -272,7 +273,7 @@ public class load_saved_data extends HttpServlet {
                         readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
                         }
                         else{
-                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        toCallNum =  calledMethodNum(num)+" required style=\"padding:1px;\"";    
                         }
                         
                         allnum+=","+num;
@@ -285,7 +286,7 @@ public class load_saved_data extends HttpServlet {
                           readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
                         }
                         else{
-                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                            toCallDen =  calledMethodDen(den)+" required style=\"padding:1px;\"";    
                         }
                         
                         allden+=","+den;
@@ -333,7 +334,7 @@ public class load_saved_data extends HttpServlet {
                         readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
                         }
                         else{
-                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        toCallNum =  calledMethodNum(num)+" required style=\"padding:1px;\"";    
                         }
                         
                         allnum+=","+num;
@@ -346,7 +347,7 @@ public class load_saved_data extends HttpServlet {
                           readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
                         }
                         else{
-                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                            toCallDen =  calledMethodDen(den)+" required style=\"padding:1px;\"";    
                         }
                         
                         allden+=","+den;
@@ -402,7 +403,7 @@ public class load_saved_data extends HttpServlet {
                         readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
                         }
                         else{
-                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        toCallNum =  calledMethodNum(num)+" required style=\"padding:1px;\"";    
                         }
                         
                         allnum+=","+num;
@@ -415,7 +416,7 @@ public class load_saved_data extends HttpServlet {
                           readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
                         }
                         else{
-                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                            toCallDen =  calledMethodDen(den)+" required style=\"padding:1px;\"";    
                         }
                         
                         allden+=","+den;
@@ -454,7 +455,7 @@ public class load_saved_data extends HttpServlet {
                         readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
                         }
                         else{
-                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        toCallNum =  calledMethodNum(num)+" required style=\"padding:1px;\"";    
                         }
                         
                         allnum+=","+num;
@@ -467,7 +468,7 @@ public class load_saved_data extends HttpServlet {
                           readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
                         }
                         else{
-                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                            toCallDen =  calledMethodDen(den)+" required style=\"padding:1px;\"";    
                         }
                         
                         allden+=","+den;
@@ -503,7 +504,7 @@ public class load_saved_data extends HttpServlet {
                         readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
                         }
                         else{
-                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        toCallNum =  calledMethodNum(num)+" required style=\"padding:1px;\"";    
                         }
                         
                         allnum+=","+num;
@@ -516,7 +517,7 @@ public class load_saved_data extends HttpServlet {
                           readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
                         }
                         else{
-                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                            toCallDen =  calledMethodDen(den)+" required style=\"padding:1px;\"";    
                         }
                         
                         allden+=","+den;
@@ -547,7 +548,7 @@ public class load_saved_data extends HttpServlet {
                         readonly_num=" tabindex='-1'readonly style=\"padding:1px; background-color:#FFE4C4\" ";    
                         }
                         else{
-                        toCallNum =  calledMethodNum(num)+" style=\"padding:1px;\"";    
+                        toCallNum =  calledMethodNum(num)+" required style=\"padding:1px;\"";    
                         }
                         
                         allnum+=","+num;
@@ -560,7 +561,7 @@ public class load_saved_data extends HttpServlet {
                           readonly_den=" tabindex='-1' readonly style=\"padding:1px; background-color:#FFE4C4\" ";  
                         }
                         else{
-                            toCallDen =  calledMethodDen(den)+" style=\"padding:1px;\"";    
+                            toCallDen =  calledMethodDen(den)+" required style=\"padding:1px;\"";    
                         }
                         
                         allden+=","+den;

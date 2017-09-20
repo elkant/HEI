@@ -114,7 +114,7 @@ public class login extends HttpServlet {
 
                     conn.st3.executeUpdate(inserter);
                     //the next page to be opened based on user level
-                    nextPage = "adduser.jsp";
+                    nextPage = "enterdata.jsp";
 
                   error_login=null;
 //String fulname=""+conn.rs.getString("firstname") + " "+conn.rs.getString("lastname");

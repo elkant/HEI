@@ -31,7 +31,8 @@ public final class dbConn {
     public ResultSet rs0,rs, rs1, rs2, rs3, rs4, rs_1, rs_2, rs_3, rs_4, rs_5, rs_6, anc_sch_rs;
     public Statement st0,st, st1, st2, st3, st4, st_1, st_2, st_3, st_4, st_5, st_6, anc_scheduling_st;
     public Statement state,state1,state2,state3,state4;
-    PreparedStatement ps1,ps2,ps3;
+    public PreparedStatement ps1,ps2,ps3;
+    public PreparedStatement pst,pst1,pst2,pst3;
     public Connection connect;
     String mydrive = "";
     public static int issetdbcalled_file_exists = 2;

@@ -33,28 +33,34 @@ public class loadfacils extends HttpServlet {
     String district_id,current_facils;
    HttpSession session; 
   
-   
+   String districts,districts2;
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             response.setContentType("text/html;charset=UTF-8");
-
-           district_id=request.getParameter("dist");
-           // JSONObject jsonobj = new JSONObject();
-             
-    
-           current_facils="";
-           
-           String districts="Select * from facilities where district_id='"+district_id+"' order by facility_name";
-           
+            
+            
+           current_facils=districts=districts2="";
            dbConn conn=new dbConn();
+           
+            if(request.getParameter("dist")!=null){
+           district_id=request.getParameter("dist");
+           districts="Select * from facilities where district_id='"+district_id+"' order by facility_name";  
+           districts2="Select * from facilities where district_id!='"+district_id+"' order by facility_name";  
+            }
+            else{
+            districts="Select * from facilities order by facility_name";      
+            }
+           
+           
            
            conn.rs=conn.st.executeQuery(districts);
            
            //add all the districts to the 
           
-           current_facils="<option value=\"\">Choose facilty</option>";
+//           current_facils="<option value=\"\">Choose facilty</option>";
+           current_facils="";
            
            while(conn.rs.next()){
 
@@ -62,6 +68,15 @@ public class loadfacils extends HttpServlet {
 
            }
            
+           if(request.getParameter("dist")!=null){
+             current_facils+="<option value=\"\" disabled>Facilities from other districts</option>";  
+                conn.rs1=conn.st1.executeQuery(districts2);   
+                while(conn.rs1.next()){
+
+               current_facils=current_facils+"<option value=\""+conn.rs1.getString(1)+"\">"+conn.rs1.getString(2)+"</option>";
+
+                }
+           }
            
            
            if(current_facils.equals("<option value=\"\">Choose facilty</option>")){

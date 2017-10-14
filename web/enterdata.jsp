@@ -549,14 +549,14 @@
             function load_saved_data(){
                 
                 
-                
                 var facil=document.getElementById("facility").value;
                   
                 var yr=document.getElementById("year").value;
                   
                 var month=document.getElementById("month").value;
-                  
-                if(document.getElementById("facility").value!=""&&document.getElementById("year").value!=""&&document.getElementById("month").value!=""){  
+//                 
+//                alert("year : "+yr+" month : "+month+" facil : "+facil);
+                if(facil !="" && yr!="" && month !=""){  
                 
                     $.ajax({  
                         url:"load_saved_data?facil="+facil+"&year="+yr+"&month="+month,  
@@ -609,6 +609,24 @@ session.removeAttribute("saved_data");
                                     timeout: 1800});
                     
         </script>
+        
+        <style>
+         .button {
+    background-color: #f44336; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 8px;
+}  
+.button:hover {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+            </style>
     </head>    
 
 
@@ -789,29 +807,10 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
                                             <tr> 
 
-
-                                                <%
-                                                    Calendar cal = Calendar.getInstance();
-                                                    int curyear = cal.get(Calendar.YEAR);
-
-
-                                                    String yearz = "";
-                                                    for (int a = 2007; a <= curyear; a++) {
-                                                        yearz += "<option value=\"" + a + "\">" + a + "</option>";
-
-
-
-                                                    }
-
-
-                                                %>
-
                                                 <td class="align_button_right">Cohort Birth Year<font color="red">*</font></td>
                                                 <td><Select id="year" class="textbox6" style="min-width: 400px; width:100%" onchange="getmonths(this);load_saved_data();"   name="year" >
 
                                                         <option value="">Choose  Year</option>  
-
-                                                        <%=yearz%>
 
                                                     </select></td></tr>
 
@@ -824,8 +823,11 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
                                                         <option value="">Choose  Month</option>  
                                                     </select></td></tr>
-
-
+                                            <tr>  
+                                                <td colspan="2">
+                                                      
+                                                </td>
+                                            </tr>
                                         </table>
 
 
@@ -846,12 +848,17 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
 
                                     <div id="step-2" style="width:99%;">
-                                        <h2 class="StepTitle"><p>1st Review : Cohort birth month + 12 Months  <img src="images/blguide.png" id="page2" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> <b style="margin-left:50px; font-size: 20px;" id="cohort_12"></b> </p> </h2>
+                                        <h2 class="StepTitle"><p>1st Review : Cohort birth month + 12 Months  <img src="images/blguide.png" id="page2" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> <b style="margin-left:50px; font-size: 20px;" id="cohort_12"></b>
+                                         <b style="margin-left: 50px;">
+                                            <button onclick="return fillZeros();" class="button" style="text-align: center;">Fill with Zeros</button>     
+                                       </b></p> </h2>
                                    <div id="dialog2" title="Form wizard Help." style=" font-size: 17px;">  
                                        In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  
                                        
                                           </div>
-
+<!--                                        <div>
+                                            <button onclick="submitZeroReport();" class="textbox" style="text-align: right; background-color: #a03a38; width: 180px; color: white;"> Submit Zero Report </button>     
+                                       </div>-->
 
                                         <table  border="1" cellpadding="1px" style="width: 99%;"  id="step2">
 
@@ -865,7 +872,9 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
 
                                     <div id="step-3" style="width:99%;">
-                                        <h2 class="StepTitle"><p>Outcomes for Birth Cohort at 9 Months   <img src="images/blguide.png" id="page3" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> </p> </h2>
+                                        <h2 class="StepTitle"><p>Outcomes for Birth Cohort at 9 Months   <img src="images/blguide.png" id="page3" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> <b style="margin-left: 100px;">
+                                            <button onclick="return fillZeros();" class="button" style="text-align: center;">Fill with Zeros</button>     
+                                       </b></p> </h2>
   <div id="dialog3" title="Form wizard Help." style=" font-size: 17px;">  
                                        In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  
                                        
@@ -887,7 +896,10 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
                                     <!--+++++++++++++++++++++++++++++++++++++++PREVENT  SERVICES--------------------------------------------------->       
                                     <div id="step-4" style="width:99%;">
-                                        <h2 class="StepTitle"><p>2nd Review :Cohort Birth Month + 24 Months   <img src="images/blguide.png" id="page4" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> <b style="margin-left:50px; font-size: 20px;" id="cohort_24"></b></p>  </h2>	
+                                        <h2 class="StepTitle"><p>2nd Review :Cohort Birth Month + 24 Months   <img src="images/blguide.png" id="page4" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> <b style="margin-left:50px; font-size: 20px;" id="cohort_24"></b>
+                                                <b style="margin-left: 50px;">
+                                            <button onclick="return fillZeros();" class="button" style="text-align: center;">Fill with Zeros</button>     
+                                       </b></p>  </h2>	
                                         <!-- ui-dialog -->
                          
                                           <div id="dialog4" title="Form wizard Help." style=" font-size: 17px;">  
@@ -902,7 +914,10 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                                     <!-----------------------------------------end of prevent services------------------->
 
                                     <div id="step-5" style="width:99%;">
-                                        <h2 class="StepTitle"><p>Outcomes for birth Cohort at 18 Months   <img src="images/blguide.png" id="page5" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; ">  </p> </h2>
+                                        <h2 class="StepTitle"><p>Outcomes for birth Cohort at 18 Months   <img src="images/blguide.png" id="page5" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> 
+                                                <b style="margin-left: 100px;">
+                                            <button onclick="return fillZeros();" class="button" style="text-align: center;">Fill with Zeros</button>     
+                                       </b></p> </h2>
 
                                 <div id="dialog5" title="Form wizard Help." style=" font-size: 17px;">  
                                        In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  
@@ -947,12 +962,14 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
         success:function(data){
          $("#facility").html(data);
          $("#facility").select2();
+        loadBasicData(); 
          }
     });
-            
+     loadYears();          
             
         $("#year").change(function(){
-            var year= $("#year").val();
+            loadYearSession();
+            load_saved_data();
             
         }) ; 
         $("#month").change(function(){
@@ -962,23 +979,12 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                 $("#cohort_12").html(month+", "+(parseInt(year)+1));
                 $("#cohort_24").html(month+", "+(parseInt(year)+2));
             }
+            load_saved_data();
         }) ;
        //capture facility change 
         $("#facility").change(function(){
-         //pass facility id
-        var facility_id = $("#facility").val();
-        $.ajax({
-        url:'load_dist_county?hf_id='+facility_id,
-        type:"post",
-        dataType:"json",
-        success:function(data){
-         var district = data.district;
-         var county = data.county;
-         $("#district").html(district);
-         $("#county").html(county);
-         }
-    });
-        
+            loadBasicData();
+            load_saved_data();
         });
         
         
@@ -1001,7 +1007,107 @@ $('body').on('keydown', 'input, select, textarea', function(e) {
         return false;
     }
 });
+
+function loadYearSession(){
+          //pass facility id
+        var year= $("#year").val();
+        $.ajax({
+        url:'setYearSession?year='+year,
+        type:"post",
+        dataType:"html",
+        success:function(){            
+            loadMonths();
+        }
+    });   
+   }
+
+function loadBasicData(){
+          //pass facility id
+        var facility_id = $("#facility").val();
+        $.ajax({
+        url:'load_dist_county?hf_id='+facility_id,
+        type:"post",
+        dataType:"json",
+        success:function(data){
+//            alert("called");
+         var district = data.district;
+         var county = data.county;
+         $("#district").html(district);
+         $("#county").html(county);
+         }
+    });   
+   }
+function loadYears(){
+          //pass facility id
+        $.ajax({
+        url:'loadYears',
+        type:"post",
+        dataType:"html",
+        success:function(data){
+          $("#year").html(data);
+          $("#year").select2();
+         loadMonths();
+         }
+    });   
+   }
+   
+   function loadDistrict(){
+          $.ajax({
+        url:'districtchooser',
+        type:"post",
+        dataType:"html",
+        success:function(data){
+//          $("#district").html(data);
+//         $("#district").select2();
+         }
+    });  
+   }
+   
+   function loadMonths(){
+          $.ajax({
+        url:'loadmonths',
+        type:"post",
+        dataType:"html",
+        success:function(data){
+          $("#month").html(data);
+         $("#month").select2();
+         
+        
+            var month = $("#month").val();
+            var year = $("#year").val();
+            if(year!="" && month!=""){
+            $("#cohort_12").html(month+", "+(parseInt(year)+1));
+            $("#cohort_24").html(month+", "+(parseInt(year)+2));
+            }
+            
+             load_saved_data();
+         }
+    });  
+   }
+   
         </script>
+        <script>
+        function fillZeros(){
+            var i=1;
+            while(true){
+                if($("#num_"+i).length>0){
+                $("#num_"+i).val(0);
+                $("#den_"+i).val(0);
+                $("#percent_"+i).val(0);
+                $("#targetmet_"+i).val("Y");
+                i++;
+            }
+            else{
+                break;
+            }
+            }
+            $("#qc1").val("1");
+            $("#qc2").val("1");
+         return false;   
+        }    
+            
+        </script>
+            
     </body>
 
 

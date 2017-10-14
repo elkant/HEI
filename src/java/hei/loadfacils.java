@@ -34,12 +34,11 @@ public class loadfacils extends HttpServlet {
    HttpSession session; 
   
    String districts,districts2;
-    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             response.setContentType("text/html;charset=UTF-8");
-            
+            session = request.getSession();
             
            current_facils=districts=districts2="";
            dbConn conn=new dbConn();
@@ -63,18 +62,34 @@ public class loadfacils extends HttpServlet {
 //           current_facils="";
            
            while(conn.rs.next()){
-
-          current_facils=current_facils+"<option value=\""+conn.rs.getString(1)+"\">"+conn.rs.getString(2)+"</option>";
-
+                   if(session.getAttribute("facility")!=null){
+                   if(session.getAttribute("facility").toString().equals(conn.rs.getString(1))){
+          current_facils=current_facils+"<option value=\""+conn.rs.getString(1)+"\" selected>"+conn.rs.getString(2)+"</option>";
+                   }
+                   else{
+              current_facils=current_facils+"<option value=\""+conn.rs.getString(1)+"\">"+conn.rs.getString(2)+"</option>";         
+                   }
+                   }
+                   else{
+               current_facils=current_facils+"<option value=\""+conn.rs.getString(1)+"\">"+conn.rs.getString(2)+"</option>";        
+                   }
            }
            
            if(request.getParameter("dist")!=null){
              current_facils+="<option value=\"\" disabled>Facilities from other districts</option>";  
                 conn.rs1=conn.st1.executeQuery(districts2);   
                 while(conn.rs1.next()){
-
-               current_facils=current_facils+"<option value=\""+conn.rs1.getString(1)+"\">"+conn.rs1.getString(2)+"</option>";
-
+         if(session.getAttribute("facility")!=null){
+                   if(session.getAttribute("facility").toString().equals(conn.rs1.getString(1))){
+               current_facils=current_facils+"<option value=\""+conn.rs1.getString(1)+"\" selected>"+conn.rs1.getString(2)+"</option>";
+                   }
+                   else{
+                current_facils=current_facils+"<option value=\""+conn.rs1.getString(1)+"\">"+conn.rs1.getString(2)+"</option>";       
+                   }
+         }
+         else{
+          current_facils=current_facils+"<option value=\""+conn.rs1.getString(1)+"\">"+conn.rs1.getString(2)+"</option>";    
+         }
                 }
            }
            

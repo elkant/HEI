@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
  */
 public class savedata extends HttpServlet {
 
-    String target = "", num = "", den = "", perc = "", targetmet = "", month = "", year = "", indicatorid = "", facility = "", district = "";
+    String target = "", num = "", den = "", perc = "", targetmet = "", month = "", year = "", county="", indicatorid = "", facility = "", district = "";
     String msg = "";
     HttpSession session;
 
@@ -71,7 +71,17 @@ public class savedata extends HttpServlet {
         if (request.getParameter("district") != null) {
             district = request.getParameter("district");
         }
-
+        
+        
+        System.out.println("year-- : "+year+"**"+month);
+            county = request.getParameter("county");
+            
+            session.setAttribute("month", month);
+            session.setAttribute("year", year);
+            session.setAttribute("facility", facility);
+            session.setAttribute("district", district);
+            session.setAttribute("county", county);
+            
         //=====we are assumming that one can save 22 fields at once..
 
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%VARIABLES RECEIVED IN A LOOP%%%%%%%%%%%%%%%%%%%%%%%%%

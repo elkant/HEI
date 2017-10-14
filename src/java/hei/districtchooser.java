@@ -38,34 +38,54 @@ public class districtchooser extends HttpServlet {
             throws ServletException, IOException {
         try {
             response.setContentType("text/html;charset=UTF-8");
-session=request.getSession();
+            session=request.getSession();
+           if(request.getParameter("county_id")!=null){
            county_id=request.getParameter("county_id");
+           }
+           else{
+               county_id="";
+           if(session.getAttribute("county")!=null){
+           county_id = session.getAttribute("county").toString();
+           }    
+           }
            System.out.println(county_id);
         //   System.out.println(" County:"+ county_name); 
            current_districts="";
-           
-           String districts="Select * from district where county_id='"+county_id+"' order by district_name";
-           
+           String districts="";
+           if(county_id.equals("")){
+           districts="Select * from district where county_id='"+county_id+"' order by district_name";
+           }
+           else{
+           districts="Select * from district order by district_name";    
+           }
            dbConn conn=new dbConn();
            
            conn.rs=conn.st.executeQuery(districts);
            
            //add all the districts to the 
           
-           current_districts="<option value=\"\">Choose district</option>";
+           current_districts="<option value=\"\">Choose District</option>";
            
            while(conn.rs.next()){
-
+               if(session.getAttribute("district")!=null){
+                   if(session.getAttribute("district").toString().equals(conn.rs.getString("district_id"))){
+                   current_districts=current_districts+"<option value=\""+conn.rs.getString("district_id")+"\" selected>"+conn.rs.getString("district_name")+"</option>";    
+                   }
+                   else{
+                       current_districts=current_districts+"<option value=\""+conn.rs.getString("district_id")+"\">"+conn.rs.getString("district_name")+"</option>";
+                   }
+               }
+               else{
           current_districts=current_districts+"<option value=\""+conn.rs.getString("district_id")+"\">"+conn.rs.getString("district_name")+"</option>";
-
+               }
            }
            PrintWriter out = response.getWriter();
             
             
-            out.println("<h1>" +current_districts+"</h1>");
+            out.println(current_districts);
           
              
-           
+            System.out.println("Loading-----------------------------");
   
         } catch (SQLException ex) {
             Logger.getLogger(districtchooser.class.getName()).log(Level.SEVERE, null, ex);

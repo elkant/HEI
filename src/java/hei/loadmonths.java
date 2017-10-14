@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -24,14 +25,14 @@ public class loadmonths extends HttpServlet {
     
 String allmonths="";
 String months="",year="",facilityid;
-   
+ HttpSession session;  
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
          PrintWriter out = response.getWriter();
         try {
            dbConn conn = new dbConn();
-           
+           session = request.getSession();
          Calendar cal = Calendar.getInstance();
          
          String curyear=""+cal.get(Calendar.YEAR);
@@ -39,46 +40,95 @@ String months="",year="",facilityid;
          
          System.out.println("Current month_"+curmonth);
          
-           year=request.getParameter("yr");
+         if(request.getParameter("yr")!=null) { 
+         year=request.getParameter("yr");
+         }
+         else{
+          if(session.getAttribute("year")!=null){
+              year =session.getAttribute("year").toString();
+          }   
+         }
+         if(request.getParameter("facil")!=null){
            facilityid=request.getParameter("facil");
-             
+         }
+         else{
+         if(session.getAttribute("facility")!=null){
+           facilityid = session.getAttribute("facility").toString();
+         }    
+         }
            
           months="<option value=\"\">select month</option>"; 
            
            conn.rs=conn.st.executeQuery("select * from months");
             
             while(conn.rs.next()){
-            
                 conn.rs1=conn.st1.executeQuery("select * from results where birth_year='"+year+"'and month='"+conn.rs.getString("month") +"' and facility_id='"+facilityid+"' ");
         
                 if(conn.rs1.next()){
-                    
-                months+="<option value=\""+conn.rs.getString(2) +"\"> **"+conn.rs.getString(2)+"</option>"; 
-                
+                 
+               if(session.getAttribute("month")!=null){
+                   if(session.getAttribute("month").toString().equals(conn.rs.getString(2))){
+                  
+                months+="<option value=\""+conn.rs.getString(2) +"\" selected> **"+conn.rs.getString(2)+"</option>"; 
+                   }
+               
+                   else{
+                   months+="<option value=\""+conn.rs.getString(2) +"\"> **"+conn.rs.getString(2)+"</option>";      
+                   }
+               }
+               else{
+                months+="<option value=\""+conn.rs.getString(2) +"\"> **"+conn.rs.getString(2)+"</option>";     
+               }
                 }
                 else{
-                    
-                    
-                    
+                     
                     if(curyear.equals(year)){
                         
                         if(conn.rs.getInt("monthid")>curmonth){
-                         months+="<option disabled value=\""+conn.rs.getString(2) +"\"> "+conn.rs.getString(2)+"</option>";
-                        
+                             if(session.getAttribute("month")!=null){
+                   if(session.getAttribute("month").toString().equals(conn.rs.getString(2))){
+                         months+="<option disabled value=\""+conn.rs.getString(2) +"\" selected> "+conn.rs.getString(2)+"</option>";
+                   }
+                             
+                   else{
+                     months+="<option disabled value=\""+conn.rs.getString(2) +"\"> "+conn.rs.getString(2)+"</option>";   
+                   }
+                    }
+                             else{
+                      months+="<option disabled value=\""+conn.rs.getString(2) +"\"> "+conn.rs.getString(2)+"</option>";            
+                             }
                         }
                         else{
-                         months+="<option value=\""+conn.rs.getString(2) +"\"> "+conn.rs.getString(2)+"</option>";
-                        
+                             if(session.getAttribute("month")!=null){
+                   if(session.getAttribute("month").toString().equals(conn.rs.getString(2))){
+                         months+="<option value=\""+conn.rs.getString(2) +"\" selected> "+conn.rs.getString(2)+"</option>";
+                   }
+                   else{
+                    months+="<option value=\""+conn.rs.getString(2) +"\"> "+conn.rs.getString(2)+"</option>";   
+                       
+                   }
+                             }
+                             else{
+                         months+="<option value=\""+conn.rs.getString(2) +"\"> "+conn.rs.getString(2)+"</option>";     
+                        }
                         }
                       
                         
                     }
                   
                     else{
-                months+="<option value=\""+conn.rs.getString(2) +"\">"+conn.rs.getString(2)+"</option>";   
-                
+                         if(session.getAttribute("month")!=null){
+                   if(session.getAttribute("month").toString().equals(conn.rs.getString(2))){
+                months+="<option value=\""+conn.rs.getString(2) +"\" selected>"+conn.rs.getString(2)+"</option>";   
+                   }
+                   else{
+                  months+="<option value=\""+conn.rs.getString(2) +"\">"+conn.rs.getString(2)+"</option>";        
+                   }      
+                         }
+                         else{
+                        months+="<option value=\""+conn.rs.getString(2) +"\">"+conn.rs.getString(2)+"</option>";        
+                         }
                        }
-            
             
             }
             

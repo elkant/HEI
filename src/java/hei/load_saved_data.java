@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.json.JSONObject;
 
 /**
@@ -22,9 +23,9 @@ import org.json.JSONObject;
  */
 public class load_saved_data extends HttpServlet {
     
-    String month = "", year = "", indicatorid = "", facility = "", district = "";
+    String month = "", year = "", indicatorid = "", facility = "", district = "",county;
     String num,den,allnum,allden,readonly_num,readonly_den;
-    
+    HttpSession session;
     String toCallNum,toCallDen;
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -32,27 +33,32 @@ public class load_saved_data extends HttpServlet {
         System.out.println("called to run the load indicators script");
         try {
             response.setContentType("text/html;charset=UTF-8");
-            
+            session = request.getSession();
             dbConn conn = new dbConn();
             
             
             month = request.getParameter("month");
             year = request.getParameter("year");
             facility = request.getParameter("facil");
-            
+            district = request.getParameter("district");
+            county = request.getParameter("county");
+//            
+//            session.setAttribute("month", month);
+//            session.setAttribute("year", year);
+//            session.setAttribute("facility", facility);
+//            session.setAttribute("district", district);
+//            session.setAttribute("county", county);
             num=den=readonly_num=readonly_den="";
             allnum=allden=",";
             JSONObject jsonobj = new JSONObject();
            
-            
-            
             
             PrintWriter out = response.getWriter();
             
             
             
             String checkexistance = "select * from results where facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "'";
-            
+            System.out.println(checkexistance);
             
             conn.rs_5 = conn.st_5.executeQuery(checkexistance);
             

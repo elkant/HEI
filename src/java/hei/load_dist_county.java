@@ -36,7 +36,10 @@ String county,district;
             /* TODO output your page here. You may use following sample code. */
             JSONObject jobj = new JSONObject();
             
-            hf_id=district_id=county_id=district=county="";
+            hf_id=district_id=county_id="";
+                    district = "<option value=\"\">Choose District</option>";
+                    county = "<option value=\"\">Choose County</option>";
+            
             hf_id=request.getParameter("hf_id");
 //            hf_id="1";
             String getdistrict_id = "SELECT district.district_id,district.county_id FROM facilities JOIN district ON facilities.district_id=district.district_id WHERE facility_id=?";

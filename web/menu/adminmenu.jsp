@@ -24,7 +24,7 @@
                   <li class="topmenu"><a href="adduser.jsp" style="width:101px;height:21px;line-height:21px;"><span>Add User</span></a>
                 </li>
                 
-            <li class="topmenu"><a href="#" style="width:91px;height:21px;line-height:21px;"><span>Form Entry</span></a>
+            <li class="topmenu"><a href="enterdata.jsp" style="width:91px;height:21px;line-height:21px;"><span>Form Entry</span></a>
                 <ul>
 
                     <li style="width:121px;height:31px;line-height:21px;" class="sublast"><a href="enterdata.jsp">Enter/Edit data</a></li>

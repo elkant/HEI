@@ -144,7 +144,7 @@ public class login extends HttpServlet {
                 //****************************Clerk module**********************************************        
                 else if (conn.rs.getString("userlevel").equals("2")) {
                     // System.out.println("level 2");      
-                    nextPage = "cohort_home.jsp";
+                    nextPage = "enterdata.jsp";
 
 
 
@@ -183,7 +183,7 @@ public class login extends HttpServlet {
 
                 } //         ^^^^^^^^^^^^^^^^ IF  USER EXIST  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^              
                 else if (conn.rs.getString("userlevel").equals("5")) {
-                    nextPage = "guest_home.jsp";
+                    nextPage = "enterdata.jsp";
 
                     session.setAttribute("userid", conn.rs.getString(1));
                     session.setAttribute("username", conn.rs.getString("username"));

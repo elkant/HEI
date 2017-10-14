@@ -82,6 +82,26 @@
         <servlet-name>load_dist_county</servlet-name>
         <servlet-class>hei.load_dist_county</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>setCountySession</servlet-name>
+        <servlet-class>hei.setCountySession</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>setDistrictSession</servlet-name>
+        <servlet-class>hei.setDistrictSession</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>setFacilitySession</servlet-name>
+        <servlet-class>hei.setFacilitySession</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>loadYears</servlet-name>
+        <servlet-class>hei.loadYears</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>setYearSession</servlet-name>
+        <servlet-class>hei.setYearSession</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>updatedbpword</servlet-name>
         <url-pattern>/updatedbpword</url-pattern>
@@ -161,6 +181,26 @@
     <servlet-mapping>
         <servlet-name>load_dist_county</servlet-name>
         <url-pattern>/load_dist_county</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>setCountySession</servlet-name>
+        <url-pattern>/setCountySession</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>setDistrictSession</servlet-name>
+        <url-pattern>/setDistrictSession</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>setFacilitySession</servlet-name>
+        <url-pattern>/setFacilitySession</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>loadYears</servlet-name>
+        <url-pattern>/loadYears</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>setYearSession</servlet-name>
+        <url-pattern>/setYearSession</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>900000</session-timeout>

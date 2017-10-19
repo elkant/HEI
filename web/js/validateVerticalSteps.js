@@ -128,6 +128,7 @@ function validateSteps(step){
                 iserror:true
             });         
         }else{
+            load_saved_data();
             $('#wizard').smartWizard('hideMessage');
             $('#wizard').smartWizard('setError',{
                 stepnum:step,

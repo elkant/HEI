@@ -796,7 +796,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
                                             <tr>  
                                                 <td class="align_button_right">Facility Name<font color="red">*</font></td>
-                                                <td><Select id="facility" class="textbox6" style="min-width: 400px; width:100%"   onchange="facilitymilf(this);load_saved_data();" name="facility" >
+                                                <td><Select id="facility" class="textbox6" style="min-width: 400px; width:100%"   onchange="facilitymilf(this);" name="facility" >
 
                                                         <option value="">Choose Facility</option>  
                                                     </select></td>
@@ -819,7 +819,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                                             <tr>  
                                                 <td class="align_button_right">Birth Month<font color="red">*</font></td>
                                                 <td>
-                                                    <Select id="month" style="min-width: 400px; width:100%" class="textbox6"   onchange="load_saved_data();" name="month" >
+                                                    <Select id="month" style="min-width: 400px; width:100%" class="textbox6" name="month" >
 
                                                         <option value="">Choose  Month</option>  
                                                     </select></td></tr>
@@ -969,7 +969,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
             
         $("#year").change(function(){
             loadYearSession();
-            load_saved_data();
+//            load_saved_data();
             
         }) ; 
         $("#month").change(function(){
@@ -979,12 +979,12 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                 $("#cohort_12").html(month+", "+(parseInt(year)+1));
                 $("#cohort_24").html(month+", "+(parseInt(year)+2));
             }
-            load_saved_data();
+//            load_saved_data();
         }) ;
        //capture facility change 
         $("#facility").change(function(){
             loadBasicData();
-            load_saved_data();
+//            load_saved_data();
         });
         
         
@@ -1070,7 +1070,7 @@ function loadYears(){
         dataType:"html",
         success:function(data){
           $("#month").html(data);
-         $("#month").select2();
+          $("#month").select2();
          
         
             var month = $("#month").val();
@@ -1080,7 +1080,7 @@ function loadYears(){
             $("#cohort_24").html(month+", "+(parseInt(year)+2));
             }
             
-             load_saved_data();
+//             load_saved_data();
          }
     });  
    }

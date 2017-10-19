@@ -129,7 +129,7 @@ public class load_saved_data extends HttpServlet {
 //    int steponedataexists=0;
             
             
-            
+            allnum=allden=",";
             if (conn.rs_5.next()) {
                 //select data from the database...
 
@@ -172,7 +172,7 @@ public class load_saved_data extends HttpServlet {
                     }
                     
                     col = conn.rs.getInt("indicator_id");
-                    
+                    System.out.println("indicator id:"+col+" allnum:"+allnum+" all den : "+allden);
                     
                     System.out.println("num:"+allnum+"   den:"+allden);
                     String getdata = "select * from results where facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "' and indicator_id='" + conn.rs.getString("indicator_id") + "'";
@@ -391,6 +391,7 @@ public class load_saved_data extends HttpServlet {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   NEW DATA  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
             
             else {
+                allnum=allden=",";
                 System.out.println("Running the else statement here");
                 //===============================this is  step 2========================
                 int col = 0;
@@ -399,7 +400,7 @@ public class load_saved_data extends HttpServlet {
                 while (conn.rs.next()) {
                     
                     col = conn.rs.getInt("indicator_id");
-                    
+                    System.out.println("indicator : "+col);
                     
                     num=den=readonly_num=readonly_den=toCallNum=toCallDen="";
                     if(conn.rs.getString("num")!=null){
@@ -428,7 +429,7 @@ public class load_saved_data extends HttpServlet {
                         allden+=","+den;
                     }
                     
-                    System.out.println("allnum : "+allnum+" allden : "+allden);
+//                    System.out.println("allnum : "+allnum+" allden : "+allden);
                     
                     step2 += "<tr><td><p>" + conn.rs.getString("serial_no") + "</p></td>"
                             + "<td style=\"width:200px;\"><p>" + conn.rs.getString("indicator_name") + "</p><input type=\"hidden\" value=\"" + conn.rs.getString("indicators.indicator_id") + "\" name=\"indicid_" + col + "\"></td>"
@@ -440,7 +441,9 @@ public class load_saved_data extends HttpServlet {
                             + "<td><input type=\"text\" tabindex='-1'  style=\"padding:1px;background-color:#FFE4C4\"  tabindex='-1'  readonly name=\"percent_" + col + "\" id=\"percent_" + col + "\"></td>"
                             + "<td><input type=\"hidden\" tabindex='-1' style=\"width:40px;padding:1px;background-color:#FFE4C4\" readonly name=\"targetmet_" + col + "\" id=\"targetmet_" + col + "\"></td>"
                             + "</tr>";
-                    
+                    if(col==1){
+                    System.out.println("allnum: "+allnum+" allden "+allden+" den "+den+" step2 : "+readonly_den);   
+                    }
                 }
 
                 //==============================This is step 3============================

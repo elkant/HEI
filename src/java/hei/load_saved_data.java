@@ -23,10 +23,11 @@ import org.json.JSONObject;
  */
 public class load_saved_data extends HttpServlet {
     
-    String month = "", year = "", indicatorid = "", facility = "", district = "",county;
+    String month = "", year = "", indicatorid = "", facility = "", district = "",county,cohort_type="";
     String num,den,allnum,allden,readonly_num,readonly_den;
     HttpSession session;
     String toCallNum,toCallDen;
+    String side1,side2,title1,title2;
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
@@ -42,6 +43,8 @@ public class load_saved_data extends HttpServlet {
             facility = request.getParameter("facil");
             district = request.getParameter("district");
             county = request.getParameter("county");
+            cohort_type = request.getParameter("cohort_type");
+            session.setAttribute("cohort_type", cohort_type);
 //            
 //            session.setAttribute("month", month);
 //            session.setAttribute("year", year);
@@ -57,8 +60,14 @@ public class load_saved_data extends HttpServlet {
             
             
             
-            String checkexistance = "select * from results where facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "'";
-            System.out.println(checkexistance);
+            String checkexistance="";
+            if(cohort_type.equals("1")){
+            checkexistance= "select * from results where facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "' AND indicator_id<16";
+            }
+            else if(cohort_type.equals("2")){
+             checkexistance= "select * from results where facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "' AND indicator_id>=16";   
+            }
+            System.out.println("Data existence : "+checkexistance);
             
             conn.rs_5 = conn.st_5.executeQuery(checkexistance);
             
@@ -128,14 +137,120 @@ public class load_saved_data extends HttpServlet {
 
 //    int steponedataexists=0;
             
+if(cohort_type.equals("1")){
+    side1 = " <label class=\"stepNumber\">2</label>\n" +
+"                                                <span class=\"stepDesc\">\n" +
+"                                                    1St Review: <br />\n" +
+"                                                    <small>PAGE <font color=\"blue\"> <b>2</b></font> of 3</small>\n" +
+"                                                </span>";
+    side2 = " <label class=\"stepNumber\">3</label>\n" +
+"                                                <span class=\"stepDesc\">\n" +
+"                                                    10.0 Outcomes at 9 Months<br />\n" +
+"                                                    <small>PAGE <font color=\"blue\"> <b>3</b></font> of 3</small>\n" +
+"                                                </span>  "; 
+    
+    
+    title1 = "                                        <h2 class=\"StepTitle\"><p>1st Review : Cohort birth month + 12 Months  <img src=\"images/blguide.png\" id=\"page2\" title=\"Click Here to view Help For this Page.\" alt=\" Help Image \" style=\" width: 20px; \"> <b style=\"margin-left:50px; font-size: 20px;\" id=\"cohort_12\"></b>\n" +
+"                                         <b style=\"margin-left: 50px;\">\n" +
+"                                            <button onclick=\"return fillZeros();\" class=\"button\" style=\"text-align: center;\">Fill with Zeros</button>     \n" +
+"                                       </b></p> </h2>\n" +
+"                                   <div id=\"dialog2\" title=\"Form wizard Help.\" style=\" font-size: 17px;\">  \n" +
+"                                       In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  \n" +
+"                                       \n" +
+"                                          </div>\n" +
+"<!--                                        <div>\n" +
+"                                            <button onclick=\"submitZeroReport();\" class=\"textbox\" style=\"text-align: right; background-color: #a03a38; width: 180px; color: white;\"> Submit Zero Report </button>     \n" +
+"                                       </div>-->\n" +
+"\n" +
+"                                        <table  border=\"1\" cellpadding=\"1px\" style=\"width: 99%;\"  id=\"step2\">\n" +
+"\n" +
+"\n" +
+"\n" +
+"                                        </table>";
+    title2 = "    <h2 class=\"StepTitle\"><p>Outcomes for Birth Cohort at 9 Months   <img src=\"images/blguide.png\" id=\"page3\" title=\"Click Here to view Help For this Page.\" alt=\" Help Image \" style=\" width: 20px; \"> <b style=\"margin-left: 100px;\">\n" +
+"                                            <button onclick=\"return fillZeros2();\" class=\"button\" style=\"text-align: center;\">Fill with Zeros</button>     \n" +
+"                                       </b></p> </h2>\n" +
+"  <div id=\"dialog3\" title=\"Form wizard Help.\" style=\" font-size: 17px;\">  \n" +
+"                                       In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  \n" +
+"                                       \n" +
+"                                          </div>\n" +
+"\n" +
+"\n" +
+"                                        <table  border=\"1\" style=\"width: 99%;\" id=\"step3\">\n" +
+"\n" +
+"                                        </table>\n" +
+"                                        <div>\n" +
+"                                            <b style=\"\">  <input type=\"hidden\" id=\"qc1\" value=\"0\"/> </b>\n" +
+"                                        </div>";
+    
+}
+else if(cohort_type.equals("2")){
+    side1 = " <label class=\"stepNumber\">2</label>\n" +
+"                                                <span class=\"stepDesc\">\n" +
+"                                                    2nd Review:<br />\n" +
+"                                                    <small>PAGE <font color=\"blue\"> <b>2</b></font>  of 3</small>\n" +
+"                                                </span>  ";
+    side2 = " <label class=\"stepNumber\">3</label>\n" +
+"                                                <span class=\"stepDesc\">\n" +
+"                                                    13.0 Outcomes at 18 Months<br />\n" +
+"                                                    <small>PAGE <font color=\"blue\"> <b>3</b></font>  of 3</small>\n" +
+"                                                </span>    "; 
+    
+    
+    title1 = " <h2 class=\"StepTitle\"><p>2nd Review :Cohort Birth Month + 24 Months   <img src=\"images/blguide.png\" id=\"page4\" title=\"Click Here to view Help For this Page.\" alt=\" Help Image \" style=\" width: 20px; \"> <b style=\"margin-left:50px; font-size: 20px;\" id=\"cohort_24\"></b>\n" +
+"                                                <b style=\"margin-left: 50px;\">\n" +
+"                                            <button onclick=\"return fillZeros();\" class=\"button\" style=\"text-align: center;\">Fill with Zeros</button>     \n" +
+"                                       </b></p>  </h2>	\n" +
+"                                        <!-- ui-dialog -->\n" +
+"                         \n" +
+"                                          <div id=\"dialog4\" title=\"Form wizard Help.\" style=\" font-size: 17px;\">  \n" +
+"                                       In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  \n" +
+"                                       \n" +
+"                                          </div>\n" +
+"                                        \n" +
+"                                        <table  border=\"1\" style=\"width: 99%;\" id=\"step2\">\n" +
+"\n" +
+"                                        </table>";
+    title2 = " <h2 class=\"StepTitle\"><p>Outcomes for birth Cohort at 18 Months   <img src=\"images/blguide.png\" id=\"page5\" title=\"Click Here to view Help For this Page.\" alt=\" Help Image \" style=\" width: 20px; \"> \n" +
+"                                                <b style=\"margin-left: 100px;\">\n" +
+"                                            <button onclick=\"return fillZeros2();\" class=\"button\" style=\"text-align: center;\">Fill with Zeros</button>     \n" +
+"                                       </b></p> </h2>\n" +
+"\n" +
+"                                <div id=\"dialog5\" title=\"Form wizard Help.\" style=\" font-size: 17px;\">  \n" +
+"                                       In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  \n" +
+"                                       \n" +
+"                                          </div>\n" +
+"\n" +
+"                                        <table  border=\"1\" style=\"width: 99%;\" id=\"step3\">\n" +
+"\n" +
+"                                        </table> \n" +
+"\n" +
+"                                        <div>\n" +
+"                                            <b style=\"\"><input type=\"hidden\" id=\"qc2\" value=\"0\" ></b> </b>\n" +
+"                                        </div>";
+    
+}
+else{
+  side1 = "None";
+    side2 = "None"; 
+    title1 = "None";
+    title2 = "None";  
+}
+
+
+
+
+
             
             allnum=allden=",";
             if (conn.rs_5.next()) {
+                System.out.println("has data==============================");
                 //select data from the database...
 
 //        steponedataexists++;
                 //load step 2    
                 
+                if(cohort_type.equals("1")){
                 int col = 0;
 
 
@@ -176,7 +291,7 @@ public class load_saved_data extends HttpServlet {
                     
                     System.out.println("num:"+allnum+"   den:"+allden);
                     String getdata = "select * from results where facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "' and indicator_id='" + conn.rs.getString("indicator_id") + "'";
-
+                    System.out.println("query for data is : "+getdata);
                     //=========assuming that we only deal with the data that is in the database and not the onne in the administrator 
                     conn.rs1 = conn.st1.executeQuery(getdata);
                     conn.rs1.next();
@@ -258,11 +373,11 @@ public class load_saved_data extends HttpServlet {
                     
                 }
 
-
+            }
                 //===========step 4
                 
-
-
+                else if(cohort_type.equals("2")){
+                  int col = 16;
                 //select existing data from the database
                 
                 conn.rs = conn.st.executeQuery("select * from indicators where section ='3' order by indicators.indicator_id");
@@ -379,7 +494,7 @@ public class load_saved_data extends HttpServlet {
                     
                 }
                 
-                
+            } 
                 
                 
                 
@@ -601,10 +716,26 @@ public class load_saved_data extends HttpServlet {
             
             try {
                 
-                jsonobj.put("step2", step2);
-                jsonobj.put("step3", step3);
-                jsonobj.put("step4", step4);
-                jsonobj.put("step5", step5);
+                if(cohort_type.equals("1")){
+                 jsonobj.put("step2", step2);
+                jsonobj.put("step3", step3);   
+                }
+                else if(cohort_type.equals("2")){
+                jsonobj.put("step2", step4);
+                jsonobj.put("step3", step5);   
+                }
+                else{
+                jsonobj.put("step2", "");
+                jsonobj.put("step3", "");    
+                }
+//                jsonobj.put("step2", step2);
+//                jsonobj.put("step3", step3);
+//                jsonobj.put("step4", step4);
+//                jsonobj.put("step5", step5);
+                jsonobj.put("side1", side1);
+                jsonobj.put("side2", side2);
+                jsonobj.put("title1", title1);
+                jsonobj.put("title2", title2);
                 
                 //System.out.println(jsonobj);
                 

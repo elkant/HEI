@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
 public class loadmonths extends HttpServlet {
     
 String allmonths="";
-String months="",year="",facilityid;
+String months="",year="",facilityid,cohort_type;
  HttpSession session;  
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -56,13 +56,30 @@ String months="",year="",facilityid;
            facilityid = session.getAttribute("facility").toString();
          }    
          }
-           
-          months="<option value=\"\">select month</option>"; 
+         
+         cohort_type = request.getParameter("cohort_type");
+         if(cohort_type==null){
+             cohort_type="";
+         }
+            System.out.println("cohort type : "+cohort_type);
+          months="<option value=\"\">Select Month</option>"; 
            
            conn.rs=conn.st.executeQuery("select * from months");
             
             while(conn.rs.next()){
-                conn.rs1=conn.st1.executeQuery("select * from results where birth_year='"+year+"'and month='"+conn.rs.getString("month") +"' and facility_id='"+facilityid+"' ");
+                String query = "";
+                if(cohort_type.equals("1")){
+                query = "select * from results where birth_year='"+year+"'and month='"+conn.rs.getString("month") +"' and facility_id='"+facilityid+"'  AND indicator_id<16";      
+                }
+                else if(cohort_type.equals("2")){
+                 query = "select * from results where birth_year='"+year+"'and month='"+conn.rs.getString("month") +"' and facility_id='"+facilityid+"'  AND indicator_id>=16";     
+                }
+                else{
+                query = "select * from results where birth_year='0'and month='0' and facility_id='0' ";    
+                }
+                
+                System.out.println("months query : "+query);
+                conn.rs1=conn.st1.executeQuery(query);
         
                 if(conn.rs1.next()){
                  

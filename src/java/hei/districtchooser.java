@@ -52,7 +52,7 @@ public class districtchooser extends HttpServlet {
         //   System.out.println(" County:"+ county_name); 
            current_districts="";
            String districts="";
-           if(county_id.equals("")){
+           if(!county_id.equals("")){
            districts="Select * from district where county_id='"+county_id+"' order by district_name";
            }
            else{

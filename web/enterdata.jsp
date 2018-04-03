@@ -293,9 +293,6 @@
                 
             }//end of filter districts
 
-
-
-
             function filter_facil(district){
 
                 var dist=district.value;    
@@ -387,18 +384,22 @@
             
             
             function display_chosen_values(){
-    
+               var cohort_type=$('#cohort_type').val();  
    
                 document.getElementById("mnth").innerHTML="Birth:"+document.getElementById("month").value+"/_"+document.getElementById("year").value;
+                if(cohort_type==1){
                 document.getElementById("rev1").innerHTML="1st Review "+document.getElementById("month").value+"/_"+document.getElementById("year").value;
+            }
+            else if(cohort_type==2){
                 document.getElementById("rev2").innerHTML="2nd Review "+document.getElementById("month").value+"/_"+document.getElementById("year").value;
-    
+            }
             }
 
 
             //=============================================CALCULATE PERCENTAGES==================================
 
             function calculatepercent(suffix){
+                var cohort_type=$('#cohort_type').val(); 
                 if(document.getElementById("num_"+suffix).value!="" && document.getElementById("den_"+suffix).value!=""){ 
                     var num=parseInt(document.getElementById("num_"+suffix).value);
  
@@ -426,7 +427,7 @@
                         document.getElementById("targetmet_"+suffix).value="N";
      
                     }
-                        
+                     if(cohort_type==1){   
                     if((suffix>=11 && suffix<=15) || suffix==1){
                         if(suffix==1){
                              fillA();
@@ -449,7 +450,8 @@
                         }
                         document.getElementById("qc1").value=message;
                     }
-                    
+                     }
+                     else if(cohort_type==2){
                     if(suffix==1 || suffix==20 || (suffix>=21 && suffix<=26)){
                         if(suffix==1){
                              fillA();
@@ -477,7 +479,7 @@
                     }
                     document.getElementById("qc2").value=message;
                     }
-                    
+                     }
                     if(suffix==21 || suffix==20){
                     autost(23);
                 }
@@ -554,20 +556,26 @@
                 var yr=document.getElementById("year").value;
                   
                 var month=document.getElementById("month").value;
-//                 
+                var cohort_type=document.getElementById("cohort_type").value;
+       
 //                alert("year : "+yr+" month : "+month+" facil : "+facil);
-                if(facil !="" && yr!="" && month !=""){  
-                
+                if(facil !="" && yr!="" && month !="" && cohort_type!=""){  
+
                     $.ajax({  
-                        url:"load_saved_data?facil="+facil+"&year="+yr+"&month="+month,  
+                        url:"load_saved_data?facil="+facil+"&year="+yr+"&month="+month+"&&cohort_type="+cohort_type,  
                         type:'post',  
                         dataType: 'json',  
                         success: function(data) {
-                    
-                            document.getElementById("step2").innerHTML=data.step2;
-                            document.getElementById("step3").innerHTML=data.step3;
-                            document.getElementById("step4").innerHTML=data.step4;
-                            document.getElementById("step5").innerHTML=data.step5;
+                        
+                              document.getElementById("side1").innerHTML=data.side1;
+                              document.getElementById("side2").innerHTML=data.side2; 
+                              
+                              document.getElementById("step-2").innerHTML=data.title1;
+                              document.getElementById("step-3").innerHTML=data.title2;    
+                            
+                              document.getElementById("step2").innerHTML=data.step2;
+                              document.getElementById("step3").innerHTML=data.step3; 
+                               
                             display_chosen_values();   
                         
                         }}); 
@@ -671,8 +679,6 @@ session.removeAttribute("saved_data");
       <h4 style="text-align: center;background-color:#ffcc00 ;">Enter/Edit Data</h4>
             </div>
 
-
-
             <div id="content" style="width:98%;border-top-color:#ffcc00; margin-left: 25px;border-top-style: dotted;height:80vh;">
                 <br/>
                 <!------------------------------------------------CONTENT DIV------------------------------------------------------------->                
@@ -691,43 +697,25 @@ session.removeAttribute("saved_data");
                                                 <label class="stepNumber">1</label>
                                                 <span class="stepDesc">
                                                     Tool Cover:<br />
-                                                    <small>PAGE 1 of 5</small>
+                                                    <small>PAGE 1 of 3</small>
                                                 </span>
                                             </a></li>
                                         <!------------------------------------------------MEDICAL N SURGICAL HISTORY------------------------------------------------------------->  
-                                        <li><a href="#step-2">
-                                                <label class="stepNumber">2</label>
+                                        <li><a href="#step-2" id="side1">
+                                               <label class="stepNumber">2</label>
                                                 <span class="stepDesc">
-                                                    1St Review: <br />
-                                                    <small>PAGE <font color="blue"> <b>2</b></font> of 5</small>
-                                                </span>
+                                                    Review:<br />
+                                                    <small>PAGE <font color=\"blue\"> <b>2</b></font>  of 3</small>
+                                                </span> 
                                             </a></li>
                                         <!------------------------------------------------PRESENT PREGNANCY------------------------------------------------------------->  
-                                        <li><a href="#step-3">
-                                                <label class="stepNumber">3</label>
+                                        <li><a href="#step-3" id="side2">
+                                              <label class="stepNumber">3</label>
                                                 <span class="stepDesc">
-                                                    10.0 Outcomes at 9 Months<br />
-                                                    <small>PAGE <font color="blue"> <b>3</b></font> of 5</small>
-                                                </span>                   
+                                                    Review:<br />
+                                                    <small>PAGE <font color=\"blue\"> <b>3</b></font>  of 3</small>
+                                                </span>                    
                                             </a></li>
-                                        <!------------------------------------------------PREVENTIVE SERVICES-------------------------------------------------------------> 
-                                        <li><a href="#step-4">
-                                                <label class="stepNumber">4</label>
-                                                <span class="stepDesc">
-                                                    2nd Review:<br />
-                                                    <small>PAGE <font color="blue"> <b>4</b></font>  of 5</small>
-                                                </span>                   
-                                            </a></li>
-                                        <!------------------------------------------------IRON FOLATE-------------------------------------------------------------> 
-                                        <li><a href="#step-5">
-                                                <label class="stepNumber">5</label>
-                                                <span class="stepDesc">
-                                                    13.0 Outcomes at 18 Months<br />
-                                                    <small>PAGE <font color="blue"> <b>5</b></font>  of 5</small>
-                                                </span>                   
-                                            </a></li>
-
-
 
 
                                     </ul>
@@ -772,14 +760,9 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                                             <tr>
                                                 <td class="align_button_right">County<font color="red">*</font></td>
                                                 <td>
-                                                    <Select id="county" class="textbox6" style="min-width: 400px; width:100%" onchange="filter_districts(this);"   name="county" >
+                                                    <Select id="county" class="textbox6" style="min-width: 400px; width:100%"   name="county" >
 
-                                                        <option value="">Choose County</option>  
-                                                        <option value="4">Baringo</option>
-                                                        <option value="5">Kajiado</option>      
-                                                        <option value="2">Laikipia</option>
-                                                        <option value="1">Nakuru</option>
-                                                        <option value="3">Narok</option>
+
 
                                                     </select></td>
 
@@ -814,7 +797,16 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
                                                     </select></td></tr>
 
+                                            <tr>  
+                                                <td class="align_button_right">Cohort Type<font color="red">*</font></td>
+                                                <td>
+                                                    <Select id="cohort_type" style="min-width: 400px; width:100%" class="textbox6" name="cohort_type" >
 
+                                                        <option value="">Cohort Type</option>  
+                                                    </select></td></tr>
+                                            <tr>  
+                                                
+                                               
 
                                             <tr>  
                                                 <td class="align_button_right">Birth Month<font color="red">*</font></td>
@@ -822,8 +814,9 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
                                                     <Select id="month" style="min-width: 400px; width:100%" class="textbox6" name="month" >
 
                                                         <option value="">Choose  Month</option>  
-                                                    </select></td></tr>
-                                            <tr>  
+                                                    </select></td></tr> 
+                                                
+                                                
                                                 <td colspan="2">
                                                       
                                                 </td>
@@ -848,23 +841,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
 
                                     <div id="step-2" style="width:99%;">
-                                        <h2 class="StepTitle"><p>1st Review : Cohort birth month + 12 Months  <img src="images/blguide.png" id="page2" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> <b style="margin-left:50px; font-size: 20px;" id="cohort_12"></b>
-                                         <b style="margin-left: 50px;">
-                                            <button onclick="return fillZeros();" class="button" style="text-align: center;">Fill with Zeros</button>     
-                                       </b></p> </h2>
-                                   <div id="dialog2" title="Form wizard Help." style=" font-size: 17px;">  
-                                       In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  
-                                       
-                                          </div>
-<!--                                        <div>
-                                            <button onclick="submitZeroReport();" class="textbox" style="text-align: right; background-color: #a03a38; width: 180px; color: white;"> Submit Zero Report </button>     
-                                       </div>-->
-
-                                        <table  border="1" cellpadding="1px" style="width: 99%;"  id="step2">
-
-
-
-                                        </table>
+step-1
                                     </div>
 
 
@@ -872,66 +849,9 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
 
 
                                     <div id="step-3" style="width:99%;">
-                                        <h2 class="StepTitle"><p>Outcomes for Birth Cohort at 9 Months   <img src="images/blguide.png" id="page3" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> <b style="margin-left: 100px;">
-                                            <button onclick="return fillZeros();" class="button" style="text-align: center;">Fill with Zeros</button>     
-                                       </b></p> </h2>
-  <div id="dialog3" title="Form wizard Help." style=" font-size: 17px;">  
-                                       In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  
-                                       
-                                          </div>
-
-
-                                        <table  border="1" style="width: 99%;" id="step3">
-
-                                        </table>
-                                        <div>
-                                            <b style="">  <input type="hidden" id="qc1" value="0"/> </b>
-                                        </div>
+                                    step-2
                                     </div>
 
-
-
-                                    <!--------------------------------------------end of previous pregnancy--------------------------------------------------------> 
-
-
-                                    <!--+++++++++++++++++++++++++++++++++++++++PREVENT  SERVICES--------------------------------------------------->       
-                                    <div id="step-4" style="width:99%;">
-                                        <h2 class="StepTitle"><p>2nd Review :Cohort Birth Month + 24 Months   <img src="images/blguide.png" id="page4" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> <b style="margin-left:50px; font-size: 20px;" id="cohort_24"></b>
-                                                <b style="margin-left: 50px;">
-                                            <button onclick="return fillZeros();" class="button" style="text-align: center;">Fill with Zeros</button>     
-                                       </b></p>  </h2>	
-                                        <!-- ui-dialog -->
-                         
-                                          <div id="dialog4" title="Form wizard Help." style=" font-size: 17px;">  
-                                       In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  
-                                       
-                                          </div>
-                                        
-                                        <table  border="1" style="width: 99%;" id="step4">
-
-                                        </table>
-                                    </div>
-                                    <!-----------------------------------------end of prevent services------------------->
-
-                                    <div id="step-5" style="width:99%;">
-                                        <h2 class="StepTitle"><p>Outcomes for birth Cohort at 18 Months   <img src="images/blguide.png" id="page5" title="Click Here to view Help For this Page." alt=" Help Image " style=" width: 20px; "> 
-                                                <b style="margin-left: 100px;">
-                                            <button onclick="return fillZeros();" class="button" style="text-align: center;">Fill with Zeros</button>     
-                                       </b></p> </h2>
-
-                                <div id="dialog5" title="Form wizard Help." style=" font-size: 17px;">  
-                                       In this section, enter data for columns <b>Num</b> and <b>Den</b> only.The <b>%</b> and <b>Target Met </b> Columns will be auto filled based on the set Target and achieved percentage. NB:The percentage value is rounded off to the nearest whole number.  
-                                       
-                                          </div>
-
-                                        <table  border="1" style="width: 99%;" id="step5">
-
-                                        </table> 
-
-                                        <div>
-                                            <b style=""><input type="hidden" id="qc2" value="0" ></b> </b>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <!-- End SmartWizard Content -->  		
@@ -965,13 +885,26 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
         loadBasicData(); 
          }
     });
-     loadYears();          
+     loadYears();
+     loadCohortTypes();
             
+        $("#county").change(function(){
+            loadDistrict();
+            
+        }) ;
+        
         $("#year").change(function(){
             loadYearSession();
 //            load_saved_data();
             
         }) ; 
+        
+        $("#cohort_type").change(function(){
+            loadMonths();
+//            load_saved_data();
+            
+        }) ;
+        
         $("#month").change(function(){
             var month = $("#month").val();
             var year = $("#year").val();
@@ -984,6 +917,7 @@ NB:If the month you wish to enter data for is shown with two astericks i.e. **, 
        //capture facility change 
         $("#facility").change(function(){
             loadBasicData();
+            loadMonths();
 //            load_saved_data();
         });
         
@@ -1020,6 +954,18 @@ function loadYearSession(){
         }
     });   
    }
+function loadCohortTypes(){
+        $.ajax({
+        url:'loadcohorttype',
+        type:"post",
+        dataType:"html",
+        success:function(data){            
+        $("#cohort_type").html(data);
+         $("#cohort_type").select2();
+         loadMonths();
+        }
+    });   
+   }
 
 function loadBasicData(){
           //pass facility id
@@ -1052,20 +998,24 @@ function loadYears(){
    }
    
    function loadDistrict(){
+     var county= $("#county").val();
           $.ajax({
-        url:'districtchooser',
+        url:'districtchooser?county_id='+county,
         type:"post",
         dataType:"html",
         success:function(data){
-//          $("#district").html(data);
-//         $("#district").select2();
+          $("#district").html(data);
+         $("#district").select2();
          }
     });  
    }
    
    function loadMonths(){
+       var cohort_type=$('#cohort_type').val(); 
+       var facil=$('#facility').val(); 
+       var year=$('#year').val(); 
           $.ajax({
-        url:'loadmonths',
+        url:'loadmonths?cohort_type='+cohort_type+'&&facil='+facil+'&&yr='+year,
         type:"post",
         dataType:"html",
         success:function(data){
@@ -1088,8 +1038,17 @@ function loadYears(){
         </script>
         <script>
         function fillZeros(){
-            var i=1;
-            while(true){
+            var i,max;
+            var cohort_type=$('#cohort_type').val(); 
+            if(cohort_type==1){
+                i=1;
+                max=10;
+            }
+            else if(cohort_type==2){
+                i=16;
+                max=20;
+            }
+            while(i<=max){
                 if($("#num_"+i).length>0){
                 $("#num_"+i).val(0);
                 $("#den_"+i).val(0);
@@ -1104,6 +1063,35 @@ function loadYears(){
             $("#qc1").val("1");
             $("#qc2").val("1");
          return false;   
+        }
+        
+        
+        function fillZeros2(){
+         var i,max;
+            var cohort_type=$('#cohort_type').val(); 
+            if(cohort_type==1){
+                i=11;
+                max=15;
+            }
+            else if(cohort_type==2){
+                i=21;
+                max=26;
+            }
+            while(i<=max){
+                if($("#num_"+i).length>0){
+                $("#num_"+i).val(0);
+                $("#den_"+i).val(0);
+                $("#percent_"+i).val(0);
+                $("#targetmet_"+i).val("Y");
+                i++;
+            }
+            else{
+                break;
+            }
+            }
+            $("#qc1").val("1");
+            $("#qc2").val("1");
+         return false;    
         }    
             
         </script>

@@ -25,7 +25,7 @@ import javax.servlet.http.HttpSession;
 public class savedata extends HttpServlet {
 
     String target = "", num = "", den = "", perc = "", targetmet = "", month = "", year = "", county="", indicatorid = "", facility = "", district = "";
-    String msg = "";
+    String msg = "",cohort_type;
     HttpSession session;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -46,7 +46,7 @@ public class savedata extends HttpServlet {
         indicatorid = "";
         facility = "";
         msg = "";
-
+        cohort_type="";
 
 
         //========year======
@@ -68,10 +68,15 @@ public class savedata extends HttpServlet {
         }
 
         //=====district=====
+        if (request.getParameter("cohort_type") != null) {
+            cohort_type = request.getParameter("cohort_type");
+        }
+        
         if (request.getParameter("district") != null) {
             district = request.getParameter("district");
         }
         
+        session.setAttribute("cohort_type", cohort_type);
         
         System.out.println("year-- : "+year+"**"+month);
             county = request.getParameter("county");
@@ -147,10 +152,8 @@ public class savedata extends HttpServlet {
                     } //===data does not exist. insert it afresh
                     else {
 
-
-
-                        String insert = "insert into results (result_id,birth_year,facility_id,indicator_id,numerator,denominator,percentage,is_target_met,district_id,month,target)"
-                                + "                  values('"+uniqueid().trim()+"','" + year + "','" + facility + "','" + indicatorid + "','" + num + "','" + den + "','" + perc + "','" + targetmet + "','" + district + "','" + month + "','" + target + "')";
+                        String insert = "insert into results (birth_year,facility_id,indicator_id,numerator,denominator,percentage,is_target_met,district_id,month,target)"
+                                + "                  values('" + year + "','" + facility + "','" + indicatorid + "','" + num + "','" + den + "','" + perc + "','" + targetmet + "','" + district + "','" + month + "','" + target + "')";
                         System.out.println("insert"+insert);
 
                         conn.st1.executeUpdate(insert);

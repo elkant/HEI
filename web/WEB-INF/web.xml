@@ -102,6 +102,10 @@
         <servlet-name>setYearSession</servlet-name>
         <servlet-class>hei.setYearSession</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>loadcohorttype</servlet-name>
+        <servlet-class>hei.loadcohorttype</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>updatedbpword</servlet-name>
         <url-pattern>/updatedbpword</url-pattern>
@@ -201,6 +205,10 @@
     <servlet-mapping>
         <servlet-name>setYearSession</servlet-name>
         <url-pattern>/setYearSession</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>loadcohorttype</servlet-name>
+        <url-pattern>/loadcohorttype</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>900000</session-timeout>

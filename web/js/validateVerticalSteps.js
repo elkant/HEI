@@ -31,7 +31,7 @@ $(document).ready(function(){
 	   
 function validateAllSteps(){
     var isStepValid = true;
-       
+    var cohort_type=  document.getElementById("cohort_type").value.trim(); 
     if(validateStep1() == false){
         isStepValid = false;
         $('#wizard').smartWizard('setError',{
@@ -77,41 +77,42 @@ function validateAllSteps(){
     }
        
 //=========4       
-          if(validateStep4() == false){
-        isStepValid = false;
-        $('#wizard').smartWizard('setError',{
-            stepnum:4,
-            iserror:true
-        });         
-    }else{
-        $('#wizard').smartWizard('setError',{
-            stepnum:4,
-            iserror:false
-        });
-    }
+//          if(validateStep4() == false){
+//        isStepValid = false;
+//        $('#wizard').smartWizard('setError',{
+//            stepnum:4,
+//            iserror:true
+//        });         
+//    }else{
+//        $('#wizard').smartWizard('setError',{
+//            stepnum:4,
+//            iserror:false
+//        });
+//    }
       
   //====5
-     if(validateStep5() == false){
-        isStepValid = false;
-        $('#wizard').smartWizard('setError',{
-            stepnum:5,
-            iserror:true
-        });         
-    }else{
-        $('#wizard').smartWizard('setError',{
-            stepnum:5,
-            iserror:false
-        });
-    }
+//     if(validateStep5() == false){
+//        isStepValid = false;
+//        $('#wizard').smartWizard('setError',{
+//            stepnum:5,
+//            iserror:true
+//        });         
+//    }else{
+//        $('#wizard').smartWizard('setError',{
+//            stepnum:5,
+//            iserror:false
+//        });
+//    }
+//      
       
       
       
-      
-     
+    if(cohort_type==2){ 
     if(!isStepValid){
         $('#wizard').smartWizard('showMessage','<font color="red">Quality Checks 2nd Review : Please ensure the sum of numerators of <br> 16.1 to 16,6 is equal to denominator of 16.1</font>');
     }
-              
+    }
+    
     return isStepValid;
 } 	
 		
@@ -139,6 +140,7 @@ function validateSteps(step){
     //validate step 2
     if(step == 2){
         if(validateStep2() == false ){
+            var cohort_type=$('#cohort_type').val(); 
             isStepValid = false; 
             $('#wizard').smartWizard('showMessage','Please correct the errors in step'+step+ ' and click next.');
             $('#wizard').smartWizard('setError',{
@@ -159,9 +161,15 @@ function validateSteps(step){
     //validate step3
     if(step == 3){
         if(validateStep3() == false ){
-            isStepValid = false; 
+            var cohort_type=$('#cohort_type').val(); 
+            isStepValid = false;
+            if(cohort_type==1){
             $('#wizard').smartWizard('showMessage','<font color="red">Quality Checks 1st Review : Ensure the sum of numerators of <br> 11.1 to 11.5 is equal to the value of denominator of 11.1</font>');
-            $('#wizard').smartWizard('setError',{
+        }
+        else if(cohort_type==2){
+           $('#wizard').smartWizard('showMessage','<font color="red">Quality Checks 2nd Review : Please ensure the sum of numerators of <br> 16.1 to 16,6 is equal to denominator of 16.1</font>'); 
+         }
+                $('#wizard').smartWizard('setError',{
                 stepnum:step,
                 iserror:true
             });         
@@ -177,41 +185,41 @@ function validateSteps(step){
     
     
      //validate step4
-    if(step == 4){
-        if(validateStep4() == false ){
-            isStepValid = false; 
-            $('#wizard').smartWizard('showMessage','Please correct the errors in step'+step+ ' and click next.');
-            $('#wizard').smartWizard('setError',{
-                stepnum:step,
-                iserror:true
-            });         
-        }else{
-            $('#wizard').smartWizard('hideMessage');
-            $('#wizard').smartWizard('setError',{
-                stepnum:step,
-                iserror:false
-            });
-        }
-    }
+//    if(step == 4){
+//        if(validateStep4() == false ){
+//            isStepValid = false; 
+//            $('#wizard').smartWizard('showMessage','Please correct the errors in step'+step+ ' and click next.');
+//            $('#wizard').smartWizard('setError',{
+//                stepnum:step,
+//                iserror:true
+//            });         
+//        }else{
+//            $('#wizard').smartWizard('hideMessage');
+//            $('#wizard').smartWizard('setError',{
+//                stepnum:step,
+//                iserror:false
+//            });
+//        }
+//    }
     
     
     //validate step 5
-    if(step == 5){
-        if(validateStep5() == false ){
-            isStepValid = false; 
-            $('#wizard').smartWizard('showMessage','<font color="red">Quality Checks 2nd Review : Please ensure the sum of numerators of <br> 16.1 to 16,6 is equal to denominator of 16.1</font>');
-            $('#wizard').smartWizard('setError',{
-                stepnum:step,
-                iserror:true
-            });         
-        }else{
-            $('#wizard').smartWizard('hideMessage');
-            $('#wizard').smartWizard('setError',{
-                stepnum:step,
-                iserror:false
-            });
-        }
-    }
+//    if(step == 5){
+//        if(validateStep5() == false ){
+//            isStepValid = false; 
+//            $('#wizard').smartWizard('showMessage','<font color="red">Quality Checks 2nd Review : Please ensure the sum of numerators of <br> 16.1 to 16,6 is equal to denominator of 16.1</font>');
+//            $('#wizard').smartWizard('setError',{
+//                stepnum:step,
+//                iserror:true
+//            });         
+//        }else{
+//            $('#wizard').smartWizard('hideMessage');
+//            $('#wizard').smartWizard('setError',{
+//                stepnum:step,
+//                iserror:false
+//            });
+//        }
+//    }
     
    
         
@@ -229,6 +237,7 @@ function validateStep1(){
    var facil=$('#facility').val();  
    var month=$('#month').val();  
    var year=$('#year').val();  
+   var cohort_type=$('#cohort_type').val();  
    
  if(county==""){
         isValid = false;
@@ -276,6 +285,17 @@ else if(facil==""){
     // alert("anc needed");
        
           }
+    else if(cohort_type==""){
+        isValid = false;
+        
+       $("#cohort_type").css("border-color","#ff0000");
+       $("#cohort_type").slideToggle("slow",function() {});
+       $("#cohort_type").slideToggle("slow",function() {}); 
+       $("#cohort_type").focus();
+       $("#msg").html('Select Cohort Type');
+    // alert("anc needed");
+       
+          }
           
           
           else if(month==""){
@@ -306,6 +326,7 @@ else if(facil==""){
  //=====================validate step 2
     function validateStep2(){
   var isValid = true; 
+  var cohort_type=$('#cohort_type').val(); 
     // Validate Username
     validates_qc();  
  
@@ -328,10 +349,16 @@ else if(facil==""){
  //==================validate step 3   
   function validateStep3(){
        validates_qc();   
-                        
+        var cohort_type=$('#cohort_type').val();                 
       var isValid = true; 
     // Validate Username
-    var value = document.getElementById("qc1").value.trim();
+    var value;
+    if(cohort_type==1){
+        value= document.getElementById("qc1").value.trim();
+    }
+    else if(cohort_type==2){
+     value = document.getElementById("qc2").value.trim();   
+    }
     if(value!="1"){
      isValid = false;   
     }
@@ -342,34 +369,34 @@ else if(facil==""){
 
    
  //==================validate step 4   
-function validateStep4(){
-    validates_qc();      
-  
- if(1==1){
-        
-       
-    }
-
-    
-    else{
-       
-    }
-    return true;
-}
+//function validateStep4(){
+//    validates_qc();      
+//  
+// if(1==1){
+//        
+//       
+//    }
+//
+//    
+//    else{
+//       
+//    }
+//    return true;
+//}
 
 
 //===================validate step 5    
-    function validateStep5(){
-         validates_qc();    
-      var isValid = true; 
-    // Validate Username
-    var value = document.getElementById("qc2").value.trim();
-    if(value!="1"){
-     isValid = false;   
-    }
-   
-    return isValid;
-    }
+//    function validateStep5(){
+////         validates_qc();    
+////      var isValid = true; 
+////    // Validate Username
+////    var value = document.getElementById("qc2").value.trim();
+////    if(value!="1"){
+////     isValid = false;   
+////    }
+////   
+////    return isValid;
+//    }
 //================validate step 7=========================================================================
   
     function validates_qcw(){
@@ -380,6 +407,8 @@ function validateStep4(){
         var A=0,d_11=0,d_12=0,d_13=0,d_14=0,d_15=0;
         var F=0,d_21=0,d_22=0,d_23=0,d_24=0,d_25=0,d_26=0;
         
+        var cohort_type=$('#cohort_type').val(); 
+        if(cohort_type==1){
         var den_1 = document.getElementById("den_1");
         var num_11 = document.getElementById("num_11");
         var num_12 = document.getElementById("num_12");
@@ -406,7 +435,8 @@ function validateStep4(){
         }
         document.getElementById("qc1").value=message; 
         }
-    
+    }
+    else if(cohort_type==2){
         var den_21 = document.getElementById("den_21");
         var num_21 = document.getElementById("num_21");
         var num_22 = document.getElementById("num_22");
@@ -435,4 +465,5 @@ function validateStep4(){
                     }
                     document.getElementById("qc2").value=message;
                 }
+    }
 }

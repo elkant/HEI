@@ -4,11 +4,14 @@
  */
 package hei;
 
+import dashboards.PushDataSet2;
 import db.dbConn;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,16 +28,15 @@ import javax.servlet.http.HttpSession;
 public class savedata extends HttpServlet {
 
     String target = "", num = "", den = "", perc = "", targetmet = "", month = "", year = "", county="", indicatorid = "", facility = "", district = "";
-    String msg = "",cohort_type;
+    String msg = "",cohort_type,yearmonth;
     HttpSession session;
-
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
 
         session = request.getSession();
-
+        dbConn conn = new dbConn();
 
         target = "";
         num = "0";
@@ -47,7 +49,7 @@ public class savedata extends HttpServlet {
         facility = "";
         msg = "";
         cohort_type="";
-
+        yearmonth = "";
 
         //========year======
 
@@ -87,10 +89,37 @@ public class savedata extends HttpServlet {
             session.setAttribute("district", district);
             session.setAttribute("county", county);
             
+            //get month id
+            String mn="";
+            String mn_id = "SELECT monthid,month FROM months WHERE month ='"+month+"' ";
+            conn.rs = conn.st.executeQuery(mn_id);
+            if(conn.rs.next()){
+                mn = conn.rs.getString(1);
+            }
+            
+            
+            
+            
+          
+           if(Integer.parseInt(mn)<10) {
+               mn = "0"+mn;
+           }
+            
+            if(cohort_type.equals("1")){
+                yearmonth = (Integer.parseInt(year)+1)+""+mn;
+            }
+            else if(cohort_type.equals("2")){
+               yearmonth = (Integer.parseInt(year)+2)+""+mn; 
+            }
+            else{
+              yearmonth = year+""+mn;    
+            }
+            
+            System.out.println("year month "+yearmonth+" initia year :"+year+" initial month "+mn+" month name "+month);
+            
         //=====we are assumming that one can save 22 fields at once..
 
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%VARIABLES RECEIVED IN A LOOP%%%%%%%%%%%%%%%%%%%%%%%%%
-        dbConn conn = new dbConn();
 
         System.out.println("called to save data");
         
@@ -139,7 +168,7 @@ public class savedata extends HttpServlet {
                     conn.rs = conn.st.executeQuery(checkexistance);
                     if (conn.rs.next()) {
                         //=============continue from here tommorow===============
-                        String update = "update results set  target='" + target + "' , numerator='" + num + "', denominator='" + den + "' ,percentage='" + perc + "', is_target_met='" + targetmet + "' where indicator_id='" + indicatorid + "' and  facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "' ";
+                        String update = "update results set  target='" + target + "' , numerator='" + num + "', denominator='" + den + "' ,percentage='" + perc + "', is_target_met='" + targetmet + "', reportingyearmonth='"+yearmonth+"' where indicator_id='" + indicatorid + "' and  facility_id='" + facility + "' and month='" + month + "' and birth_year='" + year + "' ";
 
                         System.out.println("update:"+update);
 
@@ -152,8 +181,8 @@ public class savedata extends HttpServlet {
                     } //===data does not exist. insert it afresh
                     else {
 
-                        String insert = "insert into results (birth_year,facility_id,indicator_id,numerator,denominator,percentage,is_target_met,district_id,month,target)"
-                                + "                  values('" + year + "','" + facility + "','" + indicatorid + "','" + num + "','" + den + "','" + perc + "','" + targetmet + "','" + district + "','" + month + "','" + target + "')";
+                        String insert = "insert into results (birth_year,facility_id,indicator_id,numerator,denominator,percentage,is_target_met,district_id,month,target,reportingyearmonth)"
+                                + "                  values('" + year + "','" + facility + "','" + indicatorid + "','" + num + "','" + den + "','" + perc + "','" + targetmet + "','" + district + "','" + month + "','" + target + "', '"+yearmonth+"')";
                         System.out.println("insert"+insert);
 
                         conn.st1.executeUpdate(insert);
@@ -175,8 +204,28 @@ public class savedata extends HttpServlet {
             }
 
         }//end of forloop
-        
-        
+      
+        if(cohort_type.equals("2")){
+    //dashboard system
+    String mfl_code="";
+    String getmfl = "SELECT facility_mfl_code AS mfl_code FROM facilities WHERE facility_id='"+facility+"'";
+    conn.rs = conn.st.executeQuery(getmfl);
+    if(conn.rs.next()){
+      mfl_code = conn.rs.getString(1);
+    }
+    
+     PushDataSet2 ds2 = new PushDataSet2();
+           
+      Map m1 = new HashMap(); 
+      m1.put("startyearmonth", yearmonth);
+      m1.put("endyearmonth", yearmonth);
+      m1.put("mfl_code", mfl_code);
+      
+       ds2.pmtct_fo(m1);//IPT Module
+       
+    //dashboards 
+            System.out.println("Added dashoards data ----------------------------------------");
+        }
         System.out.println("message is:"+msg);
       //======set session response=====    
                     //session.setAttribute("msg", msg);
@@ -194,7 +243,11 @@ public class savedata extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(savedata.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /** 
@@ -207,7 +260,11 @@ public class savedata extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(savedata.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /** 

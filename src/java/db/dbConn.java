@@ -4,6 +4,7 @@
  */
 package db;
 
+import dashboards.OSValidator;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -140,9 +141,14 @@ public final class dbConn {
 
         try {
 
+            String dbconnpath = "";
+            if(OSValidator.isWindows()){
+            dbconnpath = drive + ":/HSDSA/HEI_SYSTEM/DBCONNECTION/DO_NOT_DELETE/_/_/./dbconnection.txt";
+            }
+            else if(OSValidator.isUnix()){
+            dbconnpath = "/HSDSA/HEI_SYSTEM/DBCONNECTION/DO_NOT_DELETE/_/_/./dbconnection.txt";
+            }
 
-
-            String dbconnpath = drive + ":/APHIAPLUS/HEI_SYSTEM/DBCONNECTION/DO_NOT_DELETE/_/_/./dbconnection.txt";
 
             //File file = new File("");
             // InputStream inStream = getClass().getResourceAsStream("Web-INF/classes/dbconnection.txt");  

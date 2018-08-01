@@ -4,6 +4,7 @@
  */
 package db;
 
+import dashboards.OSValidator;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -13,9 +14,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -68,8 +66,14 @@ public class updatedbpword extends HttpServlet {
     String allpath = getServletContext().getRealPath("/dbase.txt");
         String mydrive = allpath.substring(0, 1);
         //dbconnpath=mydrive+":\\MNHC_SYSTEM_APHIA_PLUS\\"; 
-      dbconnpath=mydrive+":\\APHIAPLUS\\HEI_SYSTEM\\DBCONNECTION\\DO_NOT_DELETE\\_\\_\\."; 
        
+        if(OSValidator.isWindows()){
+      dbconnpath=mydrive+":\\HSDSA\\HEI_SYSTEM\\DBCONNECTION\\DO_NOT_DELETE\\_\\_\\."; 
+        }
+        
+        else if(OSValidator.isUnix()){
+      dbconnpath="/HSDSA/HEI_SYSTEM/DBCONNECTION/DO_NOT_DELETE/_/_/."; 
+        }
       //create a directory
       
       // new File(dbconnpath).mkdir();
@@ -77,9 +81,12 @@ public class updatedbpword extends HttpServlet {
         
         
         
-
+    if(OSValidator.isWindows()){
     dbsetup =dbconnpath+"\\dbconnection.txt";
-   
+    }
+    else if(OSValidator.isUnix()){
+     dbsetup =dbconnpath+"/dbconnection.txt";    
+    }
     //dbsetup=ctx.getRealPath("/dbase.txt");
         
        

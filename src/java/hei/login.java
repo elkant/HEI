@@ -89,7 +89,7 @@ public class login extends HttpServlet {
 
 
         //query for checking user existance in the database
-        String select1 = "select * from users";
+        String select1 = "select * from internal_system.user";
 
 
 
@@ -105,44 +105,28 @@ public class login extends HttpServlet {
             if (conn.rs.getString("username").equals(uname) && conn.rs.getString("password").equals(pw)) {
 
                 error_login = null;
-                if (conn.rs.getString("userlevel").equals("1")) {
+                if (conn.rs.getString("level").equals("3")) {
                     String ip = InetAddress.getLocalHost().getHostAddress();
-                      System.out.println("level:"+conn.rs.getString("userlevel"));
+                      System.out.println("level:"+conn.rs.getString("level"));
                     String inserter = "insert into audit set host_comp='" + computername + " " + ip + "' , action='Logged in ',time='" + current_time + "',actor_id='" + conn.rs.getString("userid") + "'";
 
-                    //String inserter="insert into audit  (action,time,actor_id,host_comp) values ('"++"','"+"')";
-
                     conn.st3.executeUpdate(inserter);
-                    //the next page to be opened based on user level
                     nextPage = "enterdata.jsp";
 
                   error_login=null;
-//String fulname=""+conn.rs.getString("firstname") + " "+conn.rs.getString("lastname");
-//audit="Insert into audit (Action,User) values('Logged in','"+fulname+"')";
-
-
-
-                    //save current user details into a session
 
                    
                     session.setAttribute("fname", conn.rs.getString("fname"));
-                    session.setAttribute("lname", conn.rs.getString("mname"));
-                    session.setAttribute("level", conn.rs.getString("userlevel"));
+                    session.setAttribute("lname", conn.rs.getString("lname"));
+                    session.setAttribute("level", "1");
                     session.setAttribute("userid", conn.rs.getString("userid"));
                     session.setAttribute("username", conn.rs.getString("username"));
-                   
-
-                    System.out.println( session.getAttribute("fname")+" __"+session.getAttribute("lname"));
                     
-                    //get teacher details from the teacher registration table 
-
-
-                    /** code for auditing  */
-                    // conn.st.executeUpdate(audit);
+                    System.out.println( session.getAttribute("fname")+" __"+session.getAttribute("lname"));
                     break;
                 }//end of admin level
                 //****************************Clerk module**********************************************        
-                else if (conn.rs.getString("userlevel").equals("2")) {
+                else if (conn.rs.getString("level").equals("1")) {
                     // System.out.println("level 2");      
                     nextPage = "enterdata.jsp";
 
@@ -150,74 +134,15 @@ public class login extends HttpServlet {
 
                     session.setAttribute("userid", conn.rs.getString(1));
                     session.setAttribute("username", conn.rs.getString("username"));
-                    session.setAttribute("level", conn.rs.getString("userlevel"));
+                    session.setAttribute("level","2");
                     session.setAttribute("fname", conn.rs.getString("fname"));
                     session.setAttribute("lname", conn.rs.getString("mname"));
                     //save other session details to dbase
-
-                    String clerk = "select * from users";
-
-                    conn.rs1 = conn.st1.executeQuery(clerk);
-
-                    while (conn.rs1.next()) {
-
-                        if (conn.rs1.getString("userid").equals(session.getAttribute("userid"))) {
-
-                            session.setAttribute("f_name", conn.rs1.getString("fname"));
-                            session.setAttribute("s_name", conn.rs1.getString("mname"));
-                            String ip = InetAddress.getLocalHost().getHostAddress();
-                            String inserter = "insert into audit set host_comp='" + computername + " " + ip + "' , action='Logged in',time='" + current_time + "',actor_id='" + conn.rs.getString("userid") + "'";
-                           error_login=null; 
-                            conn.st3.executeUpdate(inserter);
-
-                            break;
-                        }
-                        else{
-                   error_login = "<b><font color=\"red\">ooops! wrong username and / or password combination</font></b>";
-
-                        }
-
-                    }
                  
                     break;
 
-                } //         ^^^^^^^^^^^^^^^^ IF  USER EXIST  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^              
-                else if (conn.rs.getString("userlevel").equals("5")) {
-                    nextPage = "enterdata.jsp";
-
-                    session.setAttribute("userid", conn.rs.getString(1));
-                    session.setAttribute("username", conn.rs.getString("username"));
-                    session.setAttribute("level", conn.rs.getString("userlevel"));
-                      session.setAttribute("fname", conn.rs.getString("fname"));
-                    session.setAttribute("lname", conn.rs.getString("mname"));
-                    //save other session details to dbase
-
-                    String guest = "select * from guest";
-
-                    conn.rs = conn.st.executeQuery(guest);
-
-                    while (conn.rs.next()) {
-
-                        if (conn.rs.getString("user_id").equals(session.getAttribute("userid"))) {
-                            session.setAttribute("who", "guest");
-                            session.setAttribute("f_name", conn.rs.getString("first_name"));
-                            session.setAttribute("s_name", conn.rs.getString("last_name"));
-               
-                            String ip = InetAddress.getLocalHost().getHostAddress();
-                            String inserter = "insert into audit set host_comp='" + computername + " " + ip + "' , action='Logged in(guest)',time='" + current_time + "',actor_id='" + conn.rs.getString("user_id") + "'";
-                            conn.st3.executeUpdate(inserter);
-                       error_login=null;
-                            break;
-                        }
-                        else{
-                         error_login = "<b><font color=\"red\">ooops! wrong username and / or password combination</font></b>";
-
-                        }
-
-                    }
-                   
-                    break;
-                } //****************************wrong username password                        
+                }           
+                 //****************************wrong username password                        
                 else {
 
                     nextPage = "index.jsp";
@@ -227,13 +152,6 @@ public class login extends HttpServlet {
                     error_login = "<b><font color=\"red\">ooops! wrong username and / or password combination</font></b>";
 
                 }
-
-
-
-
-
-
-
 
             }//end of first if
             else {
@@ -247,9 +165,6 @@ public class login extends HttpServlet {
                 System.out.println(">>" + nextPage);
 
             }
-
-
-
         }
 
 

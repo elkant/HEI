@@ -128,10 +128,13 @@ public  Connection conn = null;
 
         try {
 
-
-
-            String dbconnpath = drive + ":/APHIAPLUS/InternalSystem/DO_NOT_DELETE/_/_/./dbconnection.txt";
-
+            String dbconnpath = "";
+            if(OSValidator.isWindows()){
+            dbconnpath = drive + ":/HSDSA/InternalSystem/DO_NOT_DELETE/_/_/./dbconnection.txt";
+            }
+            else if(OSValidator.isUnix()){
+            dbconnpath = "/HSDSA/InternalSystem/DO_NOT_DELETE/_/_/./dbconnection.txt";
+            }
             //File file = new File("");
             // InputStream inStream = getClass().getResourceAsStream("Web-INF/classes/dbconnection.txt");  
             FileInputStream fstream = new FileInputStream(dbconnpath);

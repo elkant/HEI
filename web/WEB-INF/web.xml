@@ -106,6 +106,30 @@
         <servlet-name>loadcohorttype</servlet-name>
         <servlet-class>hei.loadcohorttype</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>clean_data</servlet-name>
+        <servlet-class>hei.clean_data</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>raw_data</servlet-name>
+        <servlet-class>reports.raw_data</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>load_district</servlet-name>
+        <servlet-class>reports.load_district</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>load_facilities</servlet-name>
+        <servlet-class>reports.load_facilities</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>startym</servlet-name>
+        <servlet-class>loaders.startym</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>endym</servlet-name>
+        <servlet-class>loaders.endym</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>updatedbpword</servlet-name>
         <url-pattern>/updatedbpword</url-pattern>
@@ -209,6 +233,30 @@
     <servlet-mapping>
         <servlet-name>loadcohorttype</servlet-name>
         <url-pattern>/loadcohorttype</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>clean_data</servlet-name>
+        <url-pattern>/clean_data</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>raw_data</servlet-name>
+        <url-pattern>/raw_data</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>load_district</servlet-name>
+        <url-pattern>/load_district</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>load_facilities</servlet-name>
+        <url-pattern>/load_facilities</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>startym</servlet-name>
+        <url-pattern>/startym</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>endym</servlet-name>
+        <url-pattern>/endym</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>900000</session-timeout>

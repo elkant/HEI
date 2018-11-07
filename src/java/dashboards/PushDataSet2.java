@@ -138,7 +138,10 @@ public class PushDataSet2 {
      
 //      end    
         }
-    
+             if(conn.st!=null){conn.st.close();}
+             if(conn.rs!=null){conn.rs.close();}
+             if(conndash.pst!=null){conndash.pst.close();}
+             if(conndash.conn!=null){conndash.conn.close();}
     return num;
     }
     
